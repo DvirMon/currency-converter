@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "currecny-converter": {
+    "currency-converter": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/currecny-converter",
+            "outputPath": "dist/currency-converter",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -70,10 +70,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "currecny-converter:build:production"
+              "buildTarget": "currency-converter:build:production"
             },
             "development": {
-              "buildTarget": "currecny-converter:build:development"
+              "buildTarget": "currency-converter:build:development"
             }
           },
           "defaultConfiguration": "development"
