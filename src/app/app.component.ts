@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { MatSidenavModule } from "@angular/material/sidenav";
@@ -17,6 +17,7 @@ import { RouterModule, RouterOutlet } from "@angular/router";
   ],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
   title = "currency-converter";
