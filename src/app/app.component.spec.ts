@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'currecny-converter' title`, () => {
+  it(`should have the 'currency-converter' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('currecny-converter');
+    expect(app.title).toEqual('currency-converter');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, currecny-converter');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, currency-converter');
   });
 });
