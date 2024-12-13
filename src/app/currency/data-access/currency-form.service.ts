@@ -22,7 +22,7 @@ export class CurrencyFormService {
     return this.#nfb.group(
       {
         from: this.#nfb.control("", [Validators.required]),
-        to: this.#nfb.control("", [Validators.required]),
+        to: this.#nfb.control("USD", [Validators.required]),
         amount: this.#nfb.control("", [
           Validators.required,
           Validators.pattern(/^[1-9][0-9]*$/),

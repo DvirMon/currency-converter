@@ -18,6 +18,7 @@ import { CurrencyHttpService } from "./data-access/currency-http.service";
 
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { combineLatest, debounceTime, filter, map, take } from "rxjs";
+import { CurrencyPipe } from "@angular/common";
 // import { HistoryService } from "../history/history.service";
 
 @Component({
@@ -28,6 +29,7 @@ import { combineLatest, debounceTime, filter, map, take } from "rxjs";
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
+    CurrencyPipe
     // JsonPipe,
     // AsyncPipe,
   ],
