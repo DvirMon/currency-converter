@@ -1,11 +1,18 @@
 <div class="page-currency-wrapper">
 
+  <!-- amountError :
+  <pre>{{amountError() | json}}</pre>
+
+
+  <pre>{{amountTouchedEvent$ | async }}</pre> -->
+
+
   <form [formGroup]="currencyConverterForm" class="form-wrapper">
     <mat-form-field>
       <input type="number" matInput formControlName="amount" />
-      <mat-error>Amount is required</mat-error>
-      <mat-error>Amount must be positive</mat-error>
+      <mat-error>{{amountErrorMessage()}}</mat-error>
     </mat-form-field>
+
 
     <section>
       <span> From: </span>

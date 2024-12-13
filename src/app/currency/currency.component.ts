@@ -5,10 +5,12 @@ import {
   inject,
 } from "@angular/core";
 import {
+  ControlEvent,
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  TouchedChangeEvent,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -16,9 +18,22 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyFormService } from "./data-access/currency-form.service";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { combineLatest, debounceTime, filter, map, take } from "rxjs";
-import { CurrencyPipe } from "@angular/common";
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from "@angular/core/rxjs-interop";
+import {
+  combineLatest,
+  debounceTime,
+  filter,
+  map,
+  merge,
+  startWith,
+  take,
+  tap,
+} from "rxjs";
+import { AsyncPipe, CurrencyPipe, JsonPipe } from "@angular/common";
 // import { HistoryService } from "../history/history.service";
 
 @Component({
@@ -29,7 +44,7 @@ import { CurrencyPipe } from "@angular/common";
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    CurrencyPipe
+    CurrencyPipe,
     // JsonPipe,
     // AsyncPipe,
   ],
@@ -52,30 +67,42 @@ export class CurrencyComponent {
     amount: FormControl<string>;
   }> = this.#currencyFormService.createCurrencyConverterForm();
 
-  toValue = toSignal(this.currencyConverterForm.controls["to"].valueChanges, {
+  amountControl = this.currencyConverterForm.controls.amount;
+  toControl = this.currencyConverterForm.controls.to;
+  fromControl = this.currencyConverterForm.controls.from;
+
+  toValue = toSignal(this.toControl.valueChanges, {
     initialValue: "",
   });
 
-  fromValue = toSignal(
-    this.currencyConverterForm.controls["from"].valueChanges,
-    {
-      initialValue: "",
-    }
-  );
+  fromValue = toSignal(this.fromControl.valueChanges, {
+    initialValue: "",
+  });
 
   amountValue = toSignal(
-    this.currencyConverterForm.controls["amount"].valueChanges.pipe(
+    this.amountControl.valueChanges.pipe(
       debounceTime(300),
-      filter(() => this.currencyConverterForm.controls["amount"].valid),
+      filter(() => this.amountControl.valid),
       take(1)
     ),
     { initialValue: "" }
   );
 
+  amountTouchedEvent$ = this.amountControl.events.pipe(
+    filter((event) => event instanceof TouchedChangeEvent),
+    filter((event: TouchedChangeEvent) => event.touched)
+  );
+
+  amountError$ = merge(
+    this.amountControl.statusChanges,
+    this.amountControl.valueChanges,
+    this.amountTouchedEvent$
+  ).pipe(map(() => this.setErrorMessage(this.amountControl)));
+
+  amountErrorMessage = toSignal(this.amountError$);
+
   amountRateValue = toSignal(
-    this.currencyConverterForm.controls["amount"].valueChanges.pipe(
-      map((value) => Number(value))
-    ),
+    this.amountControl.valueChanges.pipe(map((value) => Number(value))),
     { initialValue: 0 }
   );
 
@@ -114,5 +141,17 @@ export class CurrencyComponent {
 
   #convert(rates: Record<string, number>, to: string, amount: number): string {
     return (amount * rates[to]).toFixed(2);
+  }
+
+  setErrorMessage(control: FormControl<string>) {
+    if (control.hasError("required")) {
+      return "Amount is required";
+    }
+
+    if (control.hasError("pattern")) {
+      return "Amount must be positive";
+    }
+
+    return "";
   }
 }
