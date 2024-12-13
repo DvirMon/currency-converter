@@ -1,12 +1,17 @@
-import {
-  resource,
-  ResourceRef,
-  Signal
-} from "@angular/core";
+import { Injectable, resource, ResourceRef, Signal } from "@angular/core";
 import { ExchangeRatesResponse } from "./currency.model";
 
+@Injectable({ providedIn: "root" })
 export class CurrencyHttpService {
-  getCurrencyList(): ResourceRef<string[]> {
+  #currencyListResource = this.fetchCurrencyList();
+
+  getCurrencyList() {
+    return this.#currencyListResource;
+  }
+
+  called = 1;
+
+  fetchCurrencyList(): ResourceRef<string[]> {
     return resource({
       loader: async () => {
         const response = await fetch(
@@ -17,15 +22,19 @@ export class CurrencyHttpService {
     });
   }
 
-  getCurrencyRates(
-    reqData: Signal<{ from: string; to: string; amount: string } | undefined>
+  fetchCurrencyRates(
+    params: Signal<{ from: string; to: string } | undefined>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
-      request: reqData,
-      loader: async (params) => {
-        if (params?.request) {
-          const { to, from } = params.request;
+      request: () => ({
+        params: params(),
+      }),
+      loader: async ({ request }) => {
 
+        console.info("currency rates called", this.called); ;
+        ++this.called;
+        if (request.params) {
+          const { to, from } = request.params;
           const data = await fetch(
             `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
