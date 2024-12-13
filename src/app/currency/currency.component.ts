@@ -5,12 +5,11 @@ import {
   inject,
 } from "@angular/core";
 import {
-  ControlEvent,
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  TouchedChangeEvent,
+  TouchedChangeEvent
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -18,10 +17,10 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyFormService } from "./data-access/currency-form.service";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 
+import { CurrencyPipe } from "@angular/common";
 import {
-  takeUntilDestroyed,
   toObservable,
-  toSignal,
+  toSignal
 } from "@angular/core/rxjs-interop";
 import {
   combineLatest,
@@ -29,11 +28,8 @@ import {
   filter,
   map,
   merge,
-  startWith,
-  take,
-  tap,
+  take
 } from "rxjs";
-import { AsyncPipe, CurrencyPipe, JsonPipe } from "@angular/common";
 // import { HistoryService } from "../history/history.service";
 
 @Component({
