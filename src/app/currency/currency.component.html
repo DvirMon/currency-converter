@@ -4,16 +4,13 @@
     (amountChanged)="onAmountChanged($event)"></app-currency-form>
 
 
-  <app-currency-result [amount]="amount()" [to]="to()"
-    [rate]="ratesResource.value()?.rates"></app-currency-result>
+  <app-currency-result [amount]="amount()" [to]="to()" [rate]="ratesResource.value()?.rates"
+    (rateChanged)="onRateChanged($event)"></app-currency-result>
 
 
 
 </div>
 
 <pre>
-    <!-- {{ formValue() | json }}
-   form validation : {{ currencyConverterForm.valid }}
-    async {{  convertTrigger$ | async | json}}
-    signal {{  convertTrigger() | json}} -->
+ {{rateHistory() | json}}
 </pre>

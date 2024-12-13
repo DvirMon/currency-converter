@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   input,
+  output,
 } from "@angular/core";
 
 @Component({
@@ -18,13 +19,19 @@ export class CurrencyResultComponent {
   to = input<string>();
   amount = input<number>(0);
 
+  rateChanged = output<string>();
+
   rateConverted = computed(() => {
     const rates = this.rate();
     const to = this.to();
     const amount = this.amount();
 
+    console.log(rates, to, amount);
+
     if (rates && to) {
-      return this.#convert(rates, to, amount);
+      const result = this.#convert(rates, to, amount);
+      this.#emitChange(result);
+      return result;
     }
 
     return "0";
@@ -32,5 +39,9 @@ export class CurrencyResultComponent {
 
   #convert(rates: Record<string, number>, to: string, amount: number): string {
     return (amount * rates[to]).toFixed(2);
+  }
+
+  #emitChange(result : string) {
+    this.rateChanged.emit(result);
   }
 }

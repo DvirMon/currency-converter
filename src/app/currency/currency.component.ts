@@ -5,17 +5,17 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
+import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 
-import { CurrencyPipe } from "@angular/common";
+import { JsonPipe } from "@angular/common";
+import { HistoryService } from "../history/data-access/history.service";
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
-// import { HistoryService } from "../history/history.service";
 
 @Component({
   selector: "app-currency",
@@ -27,7 +27,7 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
     MatSelectModule,
     CurrencyFormComponent,
     CurrencyResultComponent,
-    // JsonPipe,
+    JsonPipe,
     // AsyncPipe,
   ],
   templateUrl: "./currency.component.html",
@@ -38,7 +38,10 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
 })
 export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
-  // #historyService = inject(HistoryService);
+  #historyService = inject(HistoryService);
+
+
+  rateHistory = this.#historyService.getRateHistory();
 
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
@@ -78,20 +81,8 @@ export class CurrencyComponent {
     this.amount.set(amount);
   }
 
-  // rateConverted = computed(() => {
-  //   const rates = this.rate();
-  //   const data = this.convertWriteTrigger();
-  //   const amount = this.amount();
+  onRateChanged(rate: string) {
+    this.#historyService.updateRateHistory(rate);
+  }
 
-  //   if (rates && data) {
-  //     const { to } = data;
-  //     return this.#convert(rates, to, amount);
-  //   }
-
-  //   return "0";
-  // });
-
-  // #convert(rates: Record<string, number>, to: string, amount: number): string {
-  //   return (amount * rates[to]).toFixed(2);
-  // }
 }
