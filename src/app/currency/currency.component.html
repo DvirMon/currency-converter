@@ -1,1 +1,37 @@
-<p>currency works!</p>
+<form [formGroup]="currencyConverterForm" class="currency-wrapper">
+  <mat-form-field>
+    <input type="number" matInput formControlName="amount" />
+    <mat-error>Amount is required</mat-error>
+    <mat-error>Amount must be positive</mat-error>
+  </mat-form-field>
+
+  <section>
+    <span> From: </span>
+    <mat-form-field>
+      <mat-select formControlName="from">
+        @for(item of currencyResource.value(); track item) {
+        <mat-option [value]="item">{{ item }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>Currency is required</mat-error>
+    </mat-form-field>
+  </section>
+
+  <section>
+    <span> To: </span>
+    <mat-form-field>
+      <mat-select formControlName="to">
+        @for(item of currencyResource.value(); track item) {
+        <mat-option [value]="item">{{ item }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>Currency is required</mat-error>
+    </mat-form-field>
+  </section>
+</form>
+<pre>
+    <!-- {{ formValue() | json }}
+   form validation : {{ currencyConverterForm.valid }}
+    async {{  convertTrigger$ | async | json}}
+    signal {{  convertTrigger() | json}} -->
+</pre>

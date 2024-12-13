@@ -1,0 +1,15 @@
+.currency-wrapper {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+
+  section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    span {
+      font-size: x-large;
+    }
+  }
+}
