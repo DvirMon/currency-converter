@@ -6,20 +6,24 @@ import {
   input,
   output,
 } from "@angular/core";
+import { CurrencyConvertPipe } from "../../../shared/currency-convert.pipe";
 
 @Component({
   selector: "app-currency-result",
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, CurrencyConvertPipe],
   templateUrl: "./currency-result.component.html",
   styleUrl: "./currency-result.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrencyResultComponent {
-  rate = input<Record<string, number> | undefined>();
-  to = input<string>();
-  amount = input<number>(0);
+  rate = input.required<Record<string, number> | undefined>();
+  to = input.required<string>();
+  amount = input.required<number>();
 
   rateChanged = output<string>();
+
+
+  exchangeRate = computed(() => this.rate()?.[this.to()])
 
   rateConverted = computed(() => {
     const rates = this.rate();

@@ -1,3 +1,4 @@
 <span class="result-wrapper">
-    Rate Converted: {{rateConverted() | currency:to()}}
+    <!-- Rate Converted: {{rateConverted() | currency:to()}} -->
+    Rate Converted: {{amount() | currencyConvert : exchangeRate() | currency:to()}}
 </span>
