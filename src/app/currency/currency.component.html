@@ -4,7 +4,7 @@
     (amountChanged)="onAmountChanged($event)"></app-currency-form>
 
 
-  <app-currency-result [amount]="amount()" [to]="convertWriteTrigger()?.to"
+  <app-currency-result [amount]="amount()" [to]="to()"
     [rate]="ratesResource.value()?.rates"></app-currency-result>
 
 

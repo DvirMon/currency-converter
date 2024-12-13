@@ -9,7 +9,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { CurrencyFormService } from "./data-access/currency-form.service";
+import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 
 import { CurrencyPipe } from "@angular/common";
@@ -42,9 +42,8 @@ export class CurrencyComponent {
 
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
-  convertWriteTrigger = signal<
+  convertTrigger = signal<
     | {
-        amount: string;
         from: string;
         to: string;
       }
@@ -53,27 +52,31 @@ export class CurrencyComponent {
 
   amount = signal<number>(0);
 
+  ratesResource = this.#currencyHttpService.getCurrencyRates(
+    this.convertTrigger
+  );
+
+  rate = computed(() => this.ratesResource.value()?.rates);
+
+  to = computed(() => this.convertTrigger()?.to);
+
   onConvertChanged(
     event:
       | {
-          amount: string;
           from: string;
           to: string;
         }
       | undefined
   ) {
-    this.convertWriteTrigger.set(event);
+    console.log(event);
+    if (event) {
+      this.convertTrigger.update(() => ({ ...event }));
+    }
   }
 
   onAmountChanged(amount: number) {
     this.amount.set(amount);
   }
-
-  ratesResource = this.#currencyHttpService.getCurrencyRates(
-    this.convertWriteTrigger
-  );
-
-  rate = computed(() => this.ratesResource.value()?.rates);
 
   // rateConverted = computed(() => {
   //   const rates = this.rate();
@@ -91,6 +94,4 @@ export class CurrencyComponent {
   // #convert(rates: Record<string, number>, to: string, amount: number): string {
   //   return (amount * rates[to]).toFixed(2);
   // }
-
-
 }
