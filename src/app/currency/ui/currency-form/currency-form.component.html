@@ -29,3 +29,10 @@
         </mat-form-field>
     </section>
 </form>
+
+
+<mat-error class="same-currency-error">
+    {{ sameCurrencyValidatorErrorMessage() }}
+</mat-error>
+
+<pre>{{ formValues$ | async | json }}</pre>
