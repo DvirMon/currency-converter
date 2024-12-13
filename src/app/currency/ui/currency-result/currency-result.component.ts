@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  input,
-  output,
+  input
 } from "@angular/core";
 import { CurrencyConvertPipe } from "../../../shared/currency-convert.pipe";
 
@@ -20,32 +19,8 @@ export class CurrencyResultComponent {
   to = input.required<string>();
   amount = input.required<number>();
 
-  rateChanged = output<string>();
-
-
-  exchangeRate = computed(() => this.rate()?.[this.to()])
-
-  rateConverted = computed(() => {
-    const rates = this.rate();
-    const to = this.to();
-    const amount = this.amount();
-
-    console.log(rates, to, amount);
-
-    if (rates && to) {
-      const result = this.#convert(rates, to, amount);
-      this.#emitChange(result);
-      return result;
-    }
-
-    return "0";
+  exchangeRate = computed(() => {
+    const rate = this.rate();
+    return rate ? rate[this.to()] : 0;
   });
-
-  #convert(rates: Record<string, number>, to: string, amount: number): string {
-    return (amount * rates[to]).toFixed(2);
-  }
-
-  #emitChange(result : string) {
-    this.rateChanged.emit(result);
-  }
 }
