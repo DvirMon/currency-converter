@@ -18,8 +18,16 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { debounceTime, filter, take, merge, map, combineLatest } from "rxjs";
-import { CurrencyFormService } from "../../data-access/currency-form.service";
+import {
+  debounceTime,
+  filter,
+  take,
+  merge,
+  map,
+  combineLatest,
+  switchMap,
+} from "rxjs";
+import { CurrencyFormService } from "./currency-form.service";
 
 @Component({
   selector: "app-currency-form",
@@ -41,7 +49,6 @@ export class CurrencyFormComponent {
 
   convertChanged = output<
     | {
-        amount: string;
         from: string;
         to: string;
       }
@@ -91,26 +98,33 @@ export class CurrencyFormComponent {
 
   formValue = computed(() => {
     return {
-      amount: this.amountValue(),
       from: this.fromValue(),
       to: this.toValue(),
     };
   });
 
   isFormValid$ = this.currencyConverterForm.statusChanges.pipe(
-    map((status) => status === "VALID")
+    map((status) => status === "VALID"),
+    filter((value) => value)
   );
 
   formValues$ = toObservable(this.formValue);
 
   convertTrigger$ = combineLatest([this.isFormValid$, this.formValues$]).pipe(
-    map(([valid, values]) => (valid ? values : undefined))
+    map(([valid, values]) => (valid ? values : undefined)),
+    filter((value) => !!value)
   );
+
+  // );
+  // convertTrigger$ = this.isFormValid$.pipe(switchMap(() => this.formValues$));
 
   convertTrigger = toSignal(this.convertTrigger$);
 
   amountRateValue = toSignal(
-    this.amountControl.valueChanges.pipe(map((value) => Number(value))),
+    this.amountControl.valueChanges.pipe(
+      map((value) => Number(value)),
+      map((value) => (value > 0 ? value : 0))
+    ),
     { initialValue: 0 }
   );
 

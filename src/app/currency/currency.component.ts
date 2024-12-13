@@ -34,7 +34,7 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
   styleUrl: "./currency.component.scss",
   host: { ngSkipHydration: "true" },
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CurrencyHttpService, CurrencyFormService],
+  providers: [CurrencyFormService],
 })
 export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
@@ -52,7 +52,7 @@ export class CurrencyComponent {
 
   amount = signal<number>(0);
 
-  ratesResource = this.#currencyHttpService.getCurrencyRates(
+  ratesResource = this.#currencyHttpService.fetchCurrencyRates(
     this.convertTrigger
   );
 
