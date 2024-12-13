@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject
+  inject,
 } from "@angular/core";
 import {
   FormControl,
@@ -17,14 +17,8 @@ import { CurrencyFormService } from "./data-access/currency-form.service";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import {
-  combineLatest,
-  debounceTime,
-  filter,
-  map,
-  take
-} from "rxjs";
-import { HistoryService } from "../history/history.service";
+import { combineLatest, debounceTime, filter, map, take } from "rxjs";
+// import { HistoryService } from "../history/history.service";
 
 @Component({
   selector: "app-currency",
@@ -46,7 +40,7 @@ import { HistoryService } from "../history/history.service";
 export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #currencyFormService = inject(CurrencyFormService);
-  #historyService = inject(HistoryService);
+  // #historyService = inject(HistoryService);
 
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
@@ -76,6 +70,13 @@ export class CurrencyComponent {
     { initialValue: "" }
   );
 
+  amountRateValue = toSignal(
+    this.currencyConverterForm.controls["amount"].valueChanges.pipe(
+      map((value) => Number(value))
+    ),
+    { initialValue: 0 }
+  );
+
   formValue = computed(() => {
     return {
       amount: this.amountValue(),
@@ -100,4 +101,16 @@ export class CurrencyComponent {
     this.convertTrigger
   );
 
+  rate = computed(() => this.ratesResource.value()?.rates);
+
+  rateConverted = computed(() => {
+    const rates = this.rate();
+    const to = this.toValue();
+    const amount = this.amountRateValue();
+    return rates ? this.#convert(rates, to, amount) : "0";
+  });
+
+  #convert(rates: Record<string, number>, to: string, amount: number): string {
+    return (amount * rates[to]).toFixed(2);
+  }
 }

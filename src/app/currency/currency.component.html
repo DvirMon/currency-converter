@@ -1,34 +1,42 @@
-<form [formGroup]="currencyConverterForm" class="currency-wrapper">
-  <mat-form-field>
-    <input type="number" matInput formControlName="amount" />
-    <mat-error>Amount is required</mat-error>
-    <mat-error>Amount must be positive</mat-error>
-  </mat-form-field>
+<div class="page-currency-wrapper">
 
-  <section>
-    <span> From: </span>
+  <form [formGroup]="currencyConverterForm" class="form-wrapper">
     <mat-form-field>
-      <mat-select formControlName="from">
-        @for(item of currencyResource.value(); track item) {
-        <mat-option [value]="item">{{ item }}</mat-option>
-        }
-      </mat-select>
-      <mat-error>Currency is required</mat-error>
+      <input type="number" matInput formControlName="amount" />
+      <mat-error>Amount is required</mat-error>
+      <mat-error>Amount must be positive</mat-error>
     </mat-form-field>
-  </section>
 
-  <section>
-    <span> To: </span>
-    <mat-form-field>
-      <mat-select formControlName="to">
-        @for(item of currencyResource.value(); track item) {
-        <mat-option [value]="item">{{ item }}</mat-option>
-        }
-      </mat-select>
-      <mat-error>Currency is required</mat-error>
-    </mat-form-field>
-  </section>
-</form>
+    <section>
+      <span> From: </span>
+      <mat-form-field>
+        <mat-select formControlName="from">
+          @for(item of currencyResource.value(); track item) {
+          <mat-option [value]="item">{{ item }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Currency is required</mat-error>
+      </mat-form-field>
+    </section>
+
+    <section>
+      <span> To: </span>
+      <mat-form-field>
+        <mat-select formControlName="to">
+          @for(item of currencyResource.value(); track item) {
+          <mat-option [value]="item">{{ item }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Currency is required</mat-error>
+      </mat-form-field>
+    </section>
+  </form>
+
+  <span class="result-wrapper">
+    Rate Converted: {{rateConverted() }}
+  </span>
+</div>
+
 <pre>
     <!-- {{ formValue() | json }}
    form validation : {{ currencyConverterForm.valid }}
