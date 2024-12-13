@@ -24,7 +24,7 @@
             <td mat-cell *matCellDef="let record">
                 @for (rate of record.rates ; track rate) {
                 <div>
-                    {{ rate[0] }}: {{ rate[1] }}
+                    {{ rate.code }}: {{ rate.value }}
                 </div>
                 }
             </td>
@@ -33,9 +33,9 @@
         <ng-container matColumnDef="convertedValue">
             <th mat-header-cell *matHeaderCellDef> Converted Value </th>
             <td mat-cell *matCellDef="let record">
-                @for (rate of record.rates ; track rate) {
+                @for (rate of record.rates; track rate) {
                 <div>
-                    {{ record.amount | currencyConvert : (rate[1]) | currency :rate[0] }}
+                    {{ record.amount | currencyConvert : rate.value | currency : rate.code }}
                 </div>
                 }
             </td>

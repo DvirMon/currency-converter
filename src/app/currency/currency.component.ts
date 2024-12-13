@@ -14,7 +14,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 
-import { JsonPipe } from "@angular/common";
 import {
   HistoryRecord,
   HistoryService,
@@ -108,7 +107,10 @@ export class CurrencyComponent {
       amount: source.amount,
       base: source.base,
       date: source.date,
-      rates: Object.entries(source.rates), // Convert Record to array of tuples
+      rates: Object.entries(source.rates).map(([code, value]) => ({
+        code,
+        value,
+      })),
     };
   }
 }

@@ -4,7 +4,7 @@ export interface HistoryRecord {
   amount: number;
   base: string;
   date: string;
-  rates: [string, number][];
+  rates: { code: string; value: number }[];
 }
 @Injectable({
   providedIn: "root",
@@ -18,6 +18,4 @@ export class HistoryService {
   getRecordHistory(): WritableSignal<HistoryRecord[]> {
     return this.#recordHistory;
   }
-
-
 }
