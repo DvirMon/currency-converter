@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  linkedSignal,
   signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -27,8 +29,6 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
     MatSelectModule,
     CurrencyFormComponent,
     CurrencyResultComponent,
-    JsonPipe,
-    // AsyncPipe,
   ],
   templateUrl: "./currency.component.html",
   styleUrl: "./currency.component.scss",
@@ -39,9 +39,6 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
 export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
-
-
-  rateHistory = this.#historyService.getRateHistory();
 
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
@@ -61,7 +58,25 @@ export class CurrencyComponent {
 
   rate = computed(() => this.ratesResource.value()?.rates);
 
-  to = computed(() => this.convertTrigger()?.to);
+  to = computed(() => {
+    const data = this.convertTrigger();
+    return data ? data.to : "USD";
+  });
+
+  // history = computed(() => {});
+
+  constructor() {
+    effect(() => {
+      const data = this.ratesResource.value();
+      const amount = this.amount();
+
+      if (data && amount) {
+        const record = { ...data, amount };
+        console.info("history", record);
+        this.#historyService.updateRecordHistory(record);
+      }
+    });
+  }
 
   onConvertChanged(
     event:
@@ -71,18 +86,14 @@ export class CurrencyComponent {
         }
       | undefined
   ) {
-    console.log(event);
     if (event) {
+      // console.info("history trigger", event, this.amount());
       this.convertTrigger.update(() => ({ ...event }));
     }
   }
 
   onAmountChanged(amount: number) {
+    // console.info("history amount", this.convertTrigger(), amount);
     this.amount.set(amount);
   }
-
-  onRateChanged(rate: string) {
-    this.#historyService.updateRateHistory(rate);
-  }
-
 }

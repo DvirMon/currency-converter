@@ -1,16 +1,21 @@
 import { Injectable, signal, WritableSignal } from "@angular/core";
 
+interface HistoryRecord {
+  amount: number;
+  base: string;
+  date: string;
+  rates: Record<string, number>;
+}
 @Injectable({
   providedIn: "root",
 })
 export class HistoryService {
-  #rateHistory = signal<string[]>([]);
+  #recordHistory = signal<HistoryRecord[]>([]);
 
-  getRateHistory(): WritableSignal<string[]> {
-    return this.#rateHistory;
+  updateRecordHistory(record: HistoryRecord): void {
+    this.#recordHistory.update((recordHistory) => [...recordHistory, record]);
   }
-
-  updateRateHistory(record: string): void {
-    this.#rateHistory.update((rateHistory) => [...rateHistory, record]);
+  getRecordHistory(): WritableSignal<HistoryRecord[]> {
+    return this.#recordHistory;
   }
 }
