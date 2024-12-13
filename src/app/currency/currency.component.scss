@@ -3,32 +3,3 @@
   flex-direction: column;
   gap: 24px;
 }
-
-.form-wrapper {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-
-  section {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-
-    span {
-      font-size: x-large;
-    }
-  }
-}
-
-
-.result-wrapper {
-  display: flex;
-  justify-content: center;
-  font-size: x-large;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  appearance: none;
-}

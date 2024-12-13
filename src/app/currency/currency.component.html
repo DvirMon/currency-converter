@@ -3,45 +3,12 @@
   <app-currency-form [currencyList]="currencyResource.value()" (convertChanged)="onConvertChanged($event)"
     (amountChanged)="onAmountChanged($event)"></app-currency-form>
 
-  <!-- <form [formGroup]="currencyConverterForm" class="form-wrapper">
-    <mat-form-field>
-      <input type="number" matInput formControlName="amount" />
-      <mat-error>{{amountErrorMessage()}}</mat-error>
-    </mat-form-field>
+
+  <app-currency-result [amount]="amount()" [to]="convertWriteTrigger()?.to"
+    [rate]="ratesResource.value()?.rates"></app-currency-result>
 
 
-    <section>
-      <span> From: </span>
-      <mat-form-field>
-        <mat-select formControlName="from">
-          @for(item of currencyResource.value(); track item) {
-          <mat-option [value]="item">{{ item }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>Currency is required</mat-error>
-      </mat-form-field>
-    </section>
 
-    <section>
-      <span> To: </span>
-      <mat-form-field>
-        <mat-select formControlName="to">
-          @for(item of currencyResource.value(); track item) {
-          <mat-option [value]="item">{{ item }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>Currency is required</mat-error>
-      </mat-form-field>
-    </section>
-  </form> -->
-
-
-  <app-currency-result></app-currency-result>
-
-
-  <span class="result-wrapper">
-    Rate Converted: {{rateConverted() | currency:toValue()}}
-  </span>
 </div>
 
 <pre>
