@@ -1,10 +1,10 @@
 import { Injectable, signal, WritableSignal } from "@angular/core";
 
-interface HistoryRecord {
+export interface HistoryRecord {
   amount: number;
   base: string;
   date: string;
-  rates: Record<string, number>;
+  rates: [string, number][];
 }
 @Injectable({
   providedIn: "root",
@@ -18,4 +18,6 @@ export class HistoryService {
   getRecordHistory(): WritableSignal<HistoryRecord[]> {
     return this.#recordHistory;
   }
+
+
 }

@@ -15,9 +15,13 @@ import { CurrencyHttpService } from "./data-access/currency-http.service";
 import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 
 import { JsonPipe } from "@angular/common";
-import { HistoryService } from "../history/data-access/history.service";
+import {
+  HistoryRecord,
+  HistoryService,
+} from "../history/data-access/history.service";
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
+import { ExchangeRatesResponse } from "./data-access/currency.model";
 
 @Component({
   selector: "app-currency",
@@ -73,7 +77,9 @@ export class CurrencyComponent {
       if (data && amount) {
         const record = { ...data, amount };
         console.info("history", record);
-        this.#historyService.updateRecordHistory(record);
+        this.#historyService.updateRecordHistory(
+          this.#transformSourceToHistory(record)
+        );
       }
     });
   }
@@ -95,5 +101,14 @@ export class CurrencyComponent {
   onAmountChanged(amount: number) {
     // console.info("history amount", this.convertTrigger(), amount);
     this.amount.set(amount);
+  }
+
+  #transformSourceToHistory(source: ExchangeRatesResponse): HistoryRecord {
+    return {
+      amount: source.amount,
+      base: source.base,
+      date: source.date,
+      rates: Object.entries(source.rates), // Convert Record to array of tuples
+    };
   }
 }
