@@ -1,13 +1,9 @@
 <div class="page-currency-wrapper">
 
-  <!-- amountError :
-  <pre>{{amountError() | json}}</pre>
+  <app-currency-form [currencyList]="currencyResource.value()" (convertChanged)="onConvertChanged($event)"
+    (amountChanged)="onAmountChanged($event)"></app-currency-form>
 
-
-  <pre>{{amountTouchedEvent$ | async }}</pre> -->
-
-
-  <form [formGroup]="currencyConverterForm" class="form-wrapper">
+  <!-- <form [formGroup]="currencyConverterForm" class="form-wrapper">
     <mat-form-field>
       <input type="number" matInput formControlName="amount" />
       <mat-error>{{amountErrorMessage()}}</mat-error>
@@ -37,7 +33,11 @@
         <mat-error>Currency is required</mat-error>
       </mat-form-field>
     </section>
-  </form>
+  </form> -->
+
+
+  <app-currency-result></app-currency-result>
+
 
   <span class="result-wrapper">
     Rate Converted: {{rateConverted() | currency:toValue()}}
