@@ -39,7 +39,14 @@ export class CurrencyFormComponent {
 
   currencyList = input<string[] | undefined>([]);
 
-  convertChanged = output<typeof this.convertTrigger>();
+  convertChanged = output<
+    | {
+        amount: string;
+        from: string;
+        to: string;
+      }
+    | undefined
+  >();
   amountChanged = output<number>();
 
   currencyConverterForm: FormGroup<{
@@ -109,9 +116,7 @@ export class CurrencyFormComponent {
 
   constructor() {
     effect(() => {
-      if (this.convertTrigger()) {
-        this.convertChanged.emit(this.convertTrigger);
-      }
+      this.convertChanged.emit(this.convertTrigger());
     });
 
     effect(() => {

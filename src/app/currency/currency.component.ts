@@ -129,16 +129,15 @@ export class CurrencyComponent {
   >(undefined);
 
   onConvertChanged(
-    event: Signal<
+    event:
       | {
           amount: string;
           from: string;
           to: string;
         }
       | undefined
-    >
   ) {
-    this.convertWriteTrigger.set(event());
+    this.convertWriteTrigger.set(event);
   }
 
   amount = signal<number>(0);
