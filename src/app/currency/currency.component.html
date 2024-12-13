@@ -4,13 +4,8 @@
     (amountChanged)="onAmountChanged($event)"></app-currency-form>
 
 
-  <app-currency-result [amount]="amount()" [to]="to()" [rate]="ratesResource.value()?.rates"
-    (rateChanged)="onRateChanged($event)"></app-currency-result>
+  <app-currency-result [amount]="amount()" [to]="to()" [rate]="ratesResource.value()?.rates"></app-currency-result>
 
 
 
 </div>
-
-<pre>
- {{rateHistory() | json}}
-</pre>

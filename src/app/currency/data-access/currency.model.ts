@@ -1,6 +1,4 @@
-interface CurrencyItem {
-    [code: string]: string; 
-}
+
   
 
 export interface ExchangeRatesResponse {

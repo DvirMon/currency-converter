@@ -31,14 +31,13 @@ export class CurrencyHttpService {
       }),
       loader: async ({ request }) => {
 
-        console.info("currency rates called", this.called); ;
+        // console.info("currency rates called", this.called); ;
         ++this.called;
         if (request.params) {
           const { to, from } = request.params;
           const data = await fetch(
             `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
-          console.log(data);
           return data;
         }
       },
