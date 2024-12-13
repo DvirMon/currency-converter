@@ -68,7 +68,7 @@ export class CurrencyComponent {
   fromControl = this.currencyConverterForm.controls.from;
 
   toValue = toSignal(this.toControl.valueChanges, {
-    initialValue: "",
+    initialValue: this.toControl.value,
   });
 
   fromValue = toSignal(this.fromControl.valueChanges, {
