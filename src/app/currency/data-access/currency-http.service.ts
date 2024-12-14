@@ -1,6 +1,7 @@
 import { Injectable, resource, ResourceRef, Signal } from "@angular/core";
 import { oneWeekAgo } from "../../shared/utils/one-week-ago";
 import {
+  CurrencyList,
   ExchangeRateRangeResponse,
   ExchangeRatesResponse,
 } from "./currency.model";
@@ -9,11 +10,13 @@ import {
 export class CurrencyHttpService {
   #currencyListResource = this.fetchCurrencyList();
 
-  getCurrencyList() {
+  getCurrencyList(): ResourceRef<CurrencyList> {
     return this.#currencyListResource;
   }
 
-  BASE_URL = "https://api.frankfurter.dev/v1";
+  //TODO - refactor with inject
+
+  #BASE_URL = "https://api.frankfurter.dev/v1";
 
   fetchChartData(
     symbols: Signal<string>
@@ -24,22 +27,21 @@ export class CurrencyHttpService {
       loader: async ({ request }) => {
         const date = oneWeekAgo();
         const symbols = request.symbols;
-        const url = `${this.BASE_URL}/${date}..?&symbols=${symbols}`;
+        const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
         const data = await fetch(url).then((res) => res.json());
         return data;
       },
     });
   }
 
-// TODO - update url with this https://api.frankfurter.dev/v1/currencies
 
-  fetchCurrencyList(): ResourceRef<string[]> {
+  fetchCurrencyList(): ResourceRef<CurrencyList> {
     return resource({
       loader: async () => {
-        const response = await fetch(
-          "https://api.frankfurter.dev/v1/latest"
-        ).then((res) => res.json());
-        return Object.keys(response.rates);
+        const response = await fetch(`${this.#BASE_URL}/currencies`).then(
+          (res) => res.json()
+        );
+        return response;
       },
     });
   }
@@ -55,7 +57,7 @@ export class CurrencyHttpService {
         if (request.params) {
           const { to, from } = request.params;
           const data = await fetch(
-            `${this.BASE_URL}/latest?base=${from}&symbols=${to}`
+            `${this.#BASE_URL}/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
           return data;
         }

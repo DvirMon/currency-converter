@@ -1,11 +1,12 @@
-
-  
-
 export interface ExchangeRatesResponse {
   amount: number;
   base: string;
   date: string;
-  rates: Record<string, number>; 
+  rates: Record<string, number>;
+}
+
+export interface CurrencyList {
+  [code: string]: string;
 }
 
 

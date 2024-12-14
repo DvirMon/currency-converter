@@ -1,41 +1,40 @@
 <div class="form-wrapper">
-    <section>
+  <section>
+    <mat-form-field>
+      <input type="number" matInput [formControl]="amountControl" />
+      <mat-error>{{ amountErrorMessage() }}</mat-error>
+    </mat-form-field>
+  </section>
 
-        <mat-form-field>
-            <input type="number" matInput [formControl]="amountControl" />
-            <mat-error>{{ amountErrorMessage() }}</mat-error>
-        </mat-form-field>
+  <form [formGroup]="currencyConverterForm">
+    <section>
+      <span> From: </span>
+      <mat-form-field>
+        <!-- <mat-select formControlName="from" (selectionChange)="onCurrencySelectionChanged($event)"> -->
+        <mat-select formControlName="from">
+          @for(item of currencyList() | keyvalue; track item.key) {
+          <mat-option [value]="item.key">{{ item.value }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Currency is required</mat-error>
+      </mat-form-field>
     </section>
 
-    <form [formGroup]="currencyConverterForm">
-        <section>
-            <span> From: </span>
-            <mat-form-field>
-                <!-- <mat-select formControlName="from" (selectionChange)="onCurrencySelectionChanged($event)"> -->
-                <mat-select formControlName="from">
-                    @for(item of currencyList(); track item) {
-                    <mat-option [value]="item">{{ item }}</mat-option>
-                    }
-                </mat-select>
-                <mat-error>Currency is required</mat-error>
-            </mat-form-field>
-        </section>
-
-        <section>
-            <span> To: </span>
-            <mat-form-field>
-                <!-- <mat-select formControlName="to" (selectionChange)="onCurrencySelectionChanged($event)"> -->
-                <mat-select formControlName="to">
-                    @for(item of currencyList(); track item) {
-                    <mat-option [value]="item">{{ item }}</mat-option>
-                    }
-                </mat-select>
-                <mat-error>Currency is required</mat-error>
-            </mat-form-field>
-        </section>
-    </form>
+    <section>
+      <span> To: </span>
+      <mat-form-field>
+        <!-- <mat-select formControlName="to" (selectionChange)="onCurrencySelectionChanged($event)"> -->
+        <mat-select formControlName="to">
+          @for(item of currencyList() | keyvalue; track item.key) {
+          <mat-option [value]="item.key">{{ item.value }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Currency is required</mat-error>
+      </mat-form-field>
+    </section>
+  </form>
 </div>
 
 <mat-error class="same-currency-error">
-    {{ sameCurrencyValidatorErrorMessage() }}
+  {{ sameCurrencyValidatorErrorMessage() }}
 </mat-error>

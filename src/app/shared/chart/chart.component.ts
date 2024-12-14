@@ -89,7 +89,6 @@ export class ChartComponent {
         const options = this.chartOptions();
 
         if (chartRef === null && data) {
-          console.log("create chart", data);
           const chart = this.createChart(canvas?.nativeElement, {
             type,
             data,
@@ -99,8 +98,6 @@ export class ChartComponent {
         }
 
         if (chartRef && data) {
-          console.log("update chart", data);
-
           chartRef.destroy();
           const chart = this.createChart(canvas?.nativeElement, {
             type,
