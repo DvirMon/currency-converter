@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  input
+  input,
 } from "@angular/core";
-import { CurrencyConvertPipe } from "../../../shared/currency-convert.pipe";
+import { CurrencyConvertPipe } from "../../../shared/pipes/currency-convert.pipe";
 
 @Component({
   selector: "app-currency-result",

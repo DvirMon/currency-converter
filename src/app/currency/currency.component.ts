@@ -13,7 +13,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 
-import { ChartComponent } from "../chart/chart.component";
+import { ChartComponent } from "../shared/chart/chart.component";
 import {
   HistoryRecord,
   HistoryService,
