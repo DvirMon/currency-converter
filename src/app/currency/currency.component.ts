@@ -100,13 +100,13 @@ export class CurrencyComponent {
       | undefined
   ) {
     if (event) {
-      // console.info("history trigger", event, this.amount());
+      console.info("history trigger", event, this.amount());
       this.convertTrigger.update(() => ({ ...event }));
     }
   }
 
   onAmountChanged(amount: number) {
-    // console.info("history amount", this.convertTrigger(), amount);
+    console.info("history amount", this.convertTrigger(), amount);
     this.amount.set(amount);
   }
 

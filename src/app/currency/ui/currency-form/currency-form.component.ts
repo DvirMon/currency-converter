@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   input,
-  output
+  output,
 } from "@angular/core";
 import {
   takeUntilDestroyed,
@@ -32,7 +32,7 @@ import {
   of,
   startWith,
   switchMap,
-  tap
+  tap,
 } from "rxjs";
 import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
@@ -153,7 +153,6 @@ export class CurrencyFormComponent {
     filter(() => this.currencyConverterForm.valid),
     tap(() => {
       if (!this.amountControl.valid) {
-        // console.log("invalid");
         this.amountControl.setValue("1");
       }
     })
@@ -188,32 +187,6 @@ export class CurrencyFormComponent {
     this.sameCurrencyValidatorErrorMessage$
   );
 
-  // events section
-
-  // currencySelectionChanged$ = this.currencySelectionChangedSource
-  //   .asObservable()
-  //   .pipe(
-  //     startWith(this.toControl.value),
-  //     pairwise(),
-  //     map(([prev, curr]) => {
-  //       if (prev === curr) {
-  //         const toValue = this.toControl.value;
-  //         const fromValue = this.fromControl.value;
-  //         console.log(toValue, fromValue);
-
-  //         console.log("same currency", prev, curr);
-
-  //         return toValue !== prev ? toValue : fromValue;
-  //       }
-  //       // this.currencySelectionChangedSource.next(this.fromControl.value);
-
-  //       return curr;
-  //     }),
-  //     filter((value) => !!value),
-  //     distinctUntilChanged()
-  //   );
-
-  // currently has double events
   currencySelectionChanged$ = merge(
     toObservable(this.toValue),
     toObservable(this.fromValue)
@@ -224,26 +197,18 @@ export class CurrencyFormComponent {
 
   constructor() {
     this.convertTrigger$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      console.log("emit form");
       this.convertChanged.emit(value);
     });
 
     //TODO - emit amount only when form is valid
     this.amountRateValue$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      console.log("amount", value);
       this.amountChanged.emit(value);
     });
 
     this.currencySelectionChanged$.subscribe((value) => {
       this.currencyChanged.emit(value);
-      // console.log(value);
-      // console.log("changed");
     });
   }
-
-  // onCurrencySelectionChanged(event: MatSelectChange) {
-  //   // this.currencySelectionChangedSource.next(event.value);
-  // }
 
   setErrorMessage(control: FormControl<unknown>) {
     if (control.hasError("required")) {
