@@ -4,7 +4,6 @@ import {
   computed,
   effect,
   inject,
-  linkedSignal,
   signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -14,14 +13,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyHttpService } from "./data-access/currency-http.service";
 import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
 
+import { ChartComponent } from "../chart/chart.component";
 import {
   HistoryRecord,
   HistoryService,
 } from "../history/data-access/history.service";
-import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
-import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
 import { ExchangeRatesResponse } from "./data-access/currency.model";
-import { ChartComponent } from "../chart/chart.component";
+import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
+import { CurrencyLineChartComponent } from "./ui/currency-line-chart/currency-line-chart.component";
+import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
 
 @Component({
   selector: "app-currency",
@@ -33,7 +33,7 @@ import { ChartComponent } from "../chart/chart.component";
     MatSelectModule,
     CurrencyFormComponent,
     CurrencyResultComponent,
-    ChartComponent
+    CurrencyLineChartComponent,
   ],
   templateUrl: "./currency.component.html",
   styleUrl: "./currency.component.scss",
