@@ -196,7 +196,6 @@ export class CurrencyFormComponent {
     });
 
     this.amountChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      console.info("amount trigger", value);
       this.amountChanged.emit(value);
     });
 
@@ -207,7 +206,6 @@ export class CurrencyFormComponent {
       });
 
     this.saveControlsValues$.pipe(takeUntilDestroyed()).subscribe((values) => {
-      console.info("saveControlsValues", values);
       this.#storageService.setToSession(this.#sessionKeys.FORM_VALUES, values);
     });
   }

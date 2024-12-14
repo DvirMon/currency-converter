@@ -1,4 +1,10 @@
-import { inject, Injectable, signal, WritableSignal } from "@angular/core";
+import {
+  effect,
+  inject,
+  Injectable,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { SESSION_KEYS } from "../../shared/services/storage.keys";
 import { StorageService } from "../../shared/services/storage.service";
 
@@ -12,14 +18,21 @@ export interface HistoryRecord {
   providedIn: "root",
 })
 export class HistoryService {
-  #recordHistory = signal<HistoryRecord[]>([]);
-
   #storageService = inject(StorageService);
 
   #sessionKeys = inject(SESSION_KEYS);
 
+  #recordHistory = signal<HistoryRecord[]>(
+    this.#storageService.getFromSession(this.#sessionKeys.HISTORY) || []
+  );
+
+  constructor() {
+    effect(() => {
+      this.#saveToSession();
+    });
+  }
+
   updateRecordHistory(record: HistoryRecord): void {
-    // this.#saveToSession();
     this.#recordHistory.update((recordHistory) => [...recordHistory, record]);
   }
   getRecordHistory(): WritableSignal<HistoryRecord[]> {
