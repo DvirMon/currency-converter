@@ -31,6 +31,8 @@ export class CurrencyHttpService {
     });
   }
 
+// TODO - update url with this https://api.frankfurter.dev/v1/currencies
+
   fetchCurrencyList(): ResourceRef<string[]> {
     return resource({
       loader: async () => {

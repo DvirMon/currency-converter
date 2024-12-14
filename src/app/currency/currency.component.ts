@@ -18,7 +18,7 @@ import {
   HistoryRecord,
   HistoryService,
 } from "../history/data-access/history.service";
-import { ExchangeRatesResponse } from "./data-access/currency.model";
+import { ExchangeRateRangeResponse, ExchangeRatesResponse } from "./data-access/currency.model";
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
 import { CurrencyLineChartComponent } from "./ui/currency-line-chart/currency-line-chart.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
@@ -45,6 +45,27 @@ export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
 
+  rates: ExchangeRateRangeResponse = {
+    amount: 1,
+    base: "EUR",
+    start_date: "2023-12-29",
+    end_date: "2024-12-12",
+    rates: {
+      "2023-12-29": {
+        USD: 1.105,
+      },
+      "2024-01-02": {
+        USD: 1.0956,
+      },
+      "2024-01-03": {
+        USD: 1.0919,
+      },
+      "2024-01-04": {
+        USD: 1.0953,
+      },
+    },
+  };
+
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
   convertTrigger = signal<
@@ -67,8 +88,6 @@ export class CurrencyComponent {
     const data = this.convertTrigger();
     return data ? data.to : "USD";
   });
-
-  // history = computed(() => {});
 
   constructor() {
     effect(() => {
