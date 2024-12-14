@@ -1,9 +1,14 @@
 <div class="page-currency-wrapper">
-  <app-currency-form [currencyList]="currencyListResource.value()" (convertChanged)="onConvertChanged($event)"
+  <app-currency-form
+    [currencyList]="currencyListResource.value()"
+    (convertChanged)="onConvertChanged($event)"
     (amountChanged)="onAmountChanged($event)"
     (currencyChanged)="onCurrencySelectionChanged($event)"></app-currency-form>
 
-  <app-currency-result [amount]="amount()" [to]="to()" [rate]="ratesResource.value()?.rates"></app-currency-result>
+  <app-currency-result
+    [amount]="amount()"
+    [to]="to()"
+    [rate]="ratesResource.value()?.rates"></app-currency-result>
 
   <app-currency-line-chart [currencyRate]="currencyRatesResource.value()">
   </app-currency-line-chart>

@@ -47,33 +47,6 @@ export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
 
-  rates: ExchangeRateRangeResponse = {
-    amount: 1.0,
-    base: "EUR",
-    start_date: "2024-12-06",
-    end_date: "2024-12-13",
-    rates: {
-      "2024-12-06": {
-        USD: 1.0581,
-      },
-      "2024-12-09": {
-        USD: 1.0568,
-      },
-      "2024-12-10": {
-        USD: 1.0527,
-      },
-      "2024-12-11": {
-        USD: 1.0507,
-      },
-      "2024-12-12": {
-        USD: 1.0491,
-      },
-      "2024-12-13": {
-        USD: 1.0518,
-      },
-    },
-  };
-
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
   convertTrigger = signal<

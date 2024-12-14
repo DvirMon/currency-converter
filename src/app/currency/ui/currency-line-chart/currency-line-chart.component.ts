@@ -5,14 +5,13 @@ import {
   input,
   Signal,
 } from "@angular/core";
+import { ChartData } from "chart.js";
 import { ChartComponent } from "../../../shared/chart/chart.component";
 import { ExchangeRateRangeResponse } from "../../data-access/currency.model";
-import { ChartData } from "chart.js";
-import { JsonPipe } from "@angular/common";
 
 @Component({
   selector: "app-currency-line-chart",
-  imports: [ChartComponent, JsonPipe],
+  imports: [ChartComponent],
   templateUrl: "./currency-line-chart.component.html",
   styleUrl: "./currency-line-chart.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

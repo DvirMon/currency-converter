@@ -1,3 +1,4 @@
+import { KeyValuePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,11 +34,13 @@ import {
   switchMap,
   tap
 } from "rxjs";
+import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
 
 @Component({
   selector: "app-currency-form",
   imports: [
+    KeyValuePipe,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
@@ -51,7 +54,7 @@ import { CurrencyFormService } from "./currency-form.service";
 export class CurrencyFormComponent {
   #currencyFormService = inject(CurrencyFormService);
 
-  currencyList = input<string[] | undefined>([]);
+  currencyList = input<CurrencyList | undefined>({});
 
   convertChanged = output<
     | {
