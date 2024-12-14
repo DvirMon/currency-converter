@@ -30,7 +30,7 @@ import {
 export class ChartComponent {
   platformId = inject(PLATFORM_ID);
 
-  chartData = input<ChartData>({} as ChartData);
+  chartData = input.required<ChartData | undefined>();
   type = input<keyof ChartTypeRegistry>("line");
 
   chartCanvas = viewChild("currencyChart", { read: ElementRef });
@@ -45,7 +45,7 @@ export class ChartComponent {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true,
       },
       tooltip: {
         // TODO - check callbacks api
@@ -88,11 +88,24 @@ export class ChartComponent {
         const data = this.chartData();
         const options = this.chartOptions();
 
-        if (chartRef === null) {
+        if (chartRef === null && data) {
+          console.log("create chart", data);
           const chart = this.createChart(canvas?.nativeElement, {
             type,
             data,
-            options
+            options,
+          });
+          this.chartRef.set(chart);
+        }
+
+        if (chartRef && data) {
+          console.log("update chart", data);
+
+          chartRef.destroy();
+          const chart = this.createChart(canvas?.nativeElement, {
+            type,
+            data,
+            options,
           });
           this.chartRef.set(chart);
         }
@@ -105,7 +118,7 @@ export class ChartComponent {
     config: {
       type: keyof ChartTypeRegistry;
       data: ChartData;
-      options? : ChartOptions
+      options?: ChartOptions;
     }
   ): Chart<keyof ChartTypeRegistry, unknown[], unknown> {
     const { type, data, options } = config;
@@ -117,7 +130,7 @@ export class ChartComponent {
         ...data,
       },
       options: {
-        ...options
+        ...options,
       },
     });
   }
