@@ -1,4 +1,6 @@
 <span class="result-wrapper">
     <!-- Rate Converted: {{rateConverted() | currency:to()}} -->
+
+    <!-- TODO - fix ui flicker  when currency changed-->
     Rate Converted: {{amount() | currencyConvert : exchangeRate() | currency:to()}}
 </span>
