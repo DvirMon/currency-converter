@@ -18,12 +18,11 @@ import { JsonPipe } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrencyLineChartComponent {
-  currencyRate = input<ExchangeRateRangeResponse>();
+  currencyRate = input.required<ExchangeRateRangeResponse | undefined>();
 
   styleConfig: { [key: string]: Record<string, unknown> } = {
     USD: {
-
-      // TODO - refactor to get randoms color 
+      // TODO - refactor to get randoms color
       borderColor: "#810081",
       backgroundColor: "rgba(129, 0, 129, 0.2)",
       pointBackgroundColor: "#810081",
@@ -35,14 +34,14 @@ export class CurrencyLineChartComponent {
     },
   };
 
-  data: Signal<ChartData> = computed(() => {
+  data: Signal<ChartData | undefined> = computed(() => {
     const response = this.currencyRate();
 
     if (response) {
       return this.#mapRatesToChartData(response);
     }
 
-    return {} as ChartData;
+    return undefined;
   });
 
   // TODO - refactor to handle multiple currencies
@@ -60,7 +59,7 @@ export class CurrencyLineChartComponent {
         {
           label: `${currency} Exchange Rate`,
           data,
-          ...this.styleConfig[currency],
+          ...this.styleConfig["USD"],
         },
       ],
     };
