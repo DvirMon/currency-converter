@@ -25,22 +25,19 @@ export class CurrencyFormService {
 
   #sessionKeys = inject(SESSION_KEYS);
 
+  defaultValues = this.#getFormDefaults();
   createCurrencyConverterForm() {
-    const defaultValues = this.#getFormDefaults();
-
     return this.#nfb.group(
       {
-        from: this.#nfb.control(defaultValues.from || "", [
-          Validators.required,
-        ]),
-        to: this.#nfb.control(defaultValues.to || "", [Validators.required]),
+        from: this.#nfb.control(this.defaultValues.from, [Validators.required]),
+        to: this.#nfb.control(this.defaultValues.to, [Validators.required]),
       },
       { validators: [differentCurrenciesValidator()] }
     );
   }
 
-  getAmountControl(): FormControl<string> {
-    return this.#nfb.control("1", [
+  getAmountControl(): FormControl<number> {
+    return this.#nfb.control(this.defaultValues.amount, [
       Validators.required,
       Validators.pattern(/^[1-9][0-9]*$/),
     ]);
@@ -49,15 +46,18 @@ export class CurrencyFormService {
   #getFormDefaults(): {
     from: string;
     to: string;
+    amount: number;
   } {
     const formSessionData = this.#storageService.getFromSession<{
       from: string;
       to: string;
+      amount: number;
     }>(this.#sessionKeys.FORM_VALUES);
 
     return {
       from: formSessionData?.from || "",
       to: formSessionData?.to || "",
+      amount: formSessionData?.amount || 1,
     };
   }
 }

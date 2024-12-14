@@ -112,6 +112,7 @@ export class CurrencyComponent {
   }
 
   onCurrencySelectionChanged(symbol: string) {
+    console.info("session currency", symbol);
     this.selectedCurrencySymbol.set(symbol);
   }
 

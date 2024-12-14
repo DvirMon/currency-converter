@@ -76,12 +76,10 @@ export class CurrencyFormComponent {
 
   currencyChanged = output<string>();
 
-
   currencyConverterForm: FormGroup<{
     from: FormControl<string>;
     to: FormControl<string>;
-  }> = this.#currencyFormService.createCurrencyConverterForm(
-  );
+  }> = this.#currencyFormService.createCurrencyConverterForm();
 
   amountControl = this.#currencyFormService.getAmountControl();
   toControl = this.currencyConverterForm.controls.to;
@@ -93,6 +91,13 @@ export class CurrencyFormComponent {
     startWith(this.fromControl.value)
   );
 
+  amountValue$ = this.amountControl.valueChanges.pipe(
+    startWith(this.amountControl.value),
+    map((value) => Number(value)),
+    map((value) => (value > 0 ? value : 0)),
+    distinctUntilChanged()
+  );
+
   toValue = toSignal(this.toValue$, {
     initialValue: this.toControl.value,
   });
@@ -101,13 +106,16 @@ export class CurrencyFormComponent {
     initialValue: this.fromControl.value,
   });
 
-  amountValue = toSignal(
-    this.amountControl.valueChanges.pipe(
-      debounceTime(300),
-      filter(() => this.amountControl.valid)
-    ),
-    { initialValue: this.amountControl.value }
-  );
+  // amountValue = toSignal(
+  //   this.amountControl.valueChanges.pipe(
+  //     debounceTime(300),
+  //     filter(() => this.amountControl.valid)
+  //   ),
+  //   { initialValue: this.amountControl.value }
+  // );
+  amountValue = toSignal(this.amountValue$, {
+    initialValue: +this.amountControl.value,
+  });
 
   amountTouchedEvent$ = this.amountControl.events.pipe(
     filter((event) => event instanceof TouchedChangeEvent),
@@ -135,29 +143,25 @@ export class CurrencyFormComponent {
     filter(() => this.currencyConverterForm.valid),
     tap(() => {
       if (!this.amountControl.valid) {
-        this.amountControl.setValue("1");
+        this.amountControl.setValue(1);
       }
     })
   );
 
-  amountRateValue$ = this.amountControl.valueChanges.pipe(
-    map((value) => Number(value)),
-    map((value) => (value > 0 ? value : 0)),
-    distinctUntilChanged()
-  );
-
-  hasCurrencyValidator$ = this.currencyConverterForm.statusChanges.pipe(
+  hasSameCurrencyError$ = this.currencyConverterForm.statusChanges.pipe(
     startWith(this.currencyConverterForm.status),
     map(() => this.currencyConverterForm.errors),
     map((errors) => errors && errors["sameCurrency"])
   );
 
-  sameCurrencyValidatorErrorMessage$ = this.hasCurrencyValidator$.pipe(
+  sameCurrencyValidatorErrorMessage$ = this.hasSameCurrencyError$.pipe(
     switchMap((hasError) =>
       iif(
         () => hasError,
-        of("The from and to currencies must be different"),
-        of("")
+        of("The from and to currencies must be different").pipe(
+          tap(() => this.amountControl.disable({ emitEvent: false }))
+        ),
+        of("").pipe(tap(() => this.amountControl.enable()))
       )
     )
   );
@@ -174,6 +178,9 @@ export class CurrencyFormComponent {
     distinctUntilChanged()
   );
 
+  //TODO - emit amount only when form is valid
+  amountChanged$ = toObservable(this.amountValue);
+
   saveControlsValues$ = combineLatest([
     toObservable(this.toValue),
     toObservable(this.fromValue),
@@ -188,8 +195,8 @@ export class CurrencyFormComponent {
       this.convertChanged.emit(value);
     });
 
-    //TODO - emit amount only when form is valid
-    this.amountRateValue$.pipe(takeUntilDestroyed()).subscribe((value) => {
+    this.amountChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
+      console.info("amount trigger", value);
       this.amountChanged.emit(value);
     });
 
@@ -199,9 +206,9 @@ export class CurrencyFormComponent {
         this.currencyChanged.emit(value);
       });
 
-    this.saveControlsValues$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      console.info("saveControlsValues", value);
-      this.#storageService.setToSession(this.#sessionKeys.FORM_VALUES, value);
+    this.saveControlsValues$.pipe(takeUntilDestroyed()).subscribe((values) => {
+      console.info("saveControlsValues", values);
+      this.#storageService.setToSession(this.#sessionKeys.FORM_VALUES, values);
     });
   }
 
