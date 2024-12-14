@@ -1,4 +1,3 @@
-import { CurrencyPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +8,7 @@ import { CurrencyConvertPipe } from "../../../shared/pipes/currency-convert.pipe
 
 @Component({
   selector: "app-currency-result",
-  imports: [CurrencyPipe, CurrencyConvertPipe],
+  imports: [CurrencyConvertPipe],
   templateUrl: "./currency-result.component.html",
   styleUrl: "./currency-result.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
