@@ -1,4 +1,4 @@
-import { KeyValuePipe } from "@angular/common";
+import { isPlatformBrowser, KeyValuePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  PLATFORM_ID,
 } from "@angular/core";
 import {
   takeUntilDestroyed,
@@ -23,9 +24,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import {
+  combineLatest,
   debounceTime,
   distinctUntilChanged,
   filter,
+  from,
   iif,
   map,
   merge,
@@ -36,6 +39,8 @@ import {
 } from "rxjs";
 import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
+import { StorageService } from "../../../shared/services/storage.service";
+import { SESSION_KEYS } from "../../../shared/services/storage.keys";
 
 @Component({
   selector: "app-currency-form",
@@ -54,11 +59,14 @@ import { CurrencyFormService } from "./currency-form.service";
 export class CurrencyFormComponent {
   #currencyFormService = inject(CurrencyFormService);
 
+  #storageService = inject(StorageService);
+
+  #sessionKeys = inject(SESSION_KEYS);
+
   currencyList = input<CurrencyList | undefined>({});
 
   convertChanged = output<
     | {
-        // amount: string;
         from: string;
         to: string;
       }
@@ -68,11 +76,12 @@ export class CurrencyFormComponent {
 
   currencyChanged = output<string>();
 
+
   currencyConverterForm: FormGroup<{
     from: FormControl<string>;
     to: FormControl<string>;
-    // amount: FormControl<string>;
-  }> = this.#currencyFormService.createCurrencyConverterForm();
+  }> = this.#currencyFormService.createCurrencyConverterForm(
+  );
 
   amountControl = this.#currencyFormService.getAmountControl();
   toControl = this.currencyConverterForm.controls.to;
@@ -84,44 +93,18 @@ export class CurrencyFormComponent {
     startWith(this.fromControl.value)
   );
 
-  toValue = toSignal(
-    this.toValue$
-      .pipe
-      // pairwise(),
-      // tap(([prev, curr]) => {
-      //   if (curr === this.fromControl.value) {
-      //     this.fromControl.setValue(prev);
-      //   }
-      // }),
-      // map(([prev, curr]) => curr)
-      (),
-    {
-      initialValue: this.toControl.value,
-    }
-  );
+  toValue = toSignal(this.toValue$, {
+    initialValue: this.toControl.value,
+  });
 
-  fromValue = toSignal(
-    this.fromValue$
-      .pipe
-      // startWith(this.fromControl.value),
-      // pairwise(),
-      // tap(([prev, curr]) => {
-      //   if (curr === this.toControl.value) {
-      //     this.toControl.setValue(prev);
-      //   }
-      // }),
-      // map(([prev, curr]) => curr)
-      (),
-    {
-      initialValue: this.fromControl.value,
-    }
-  );
+  fromValue = toSignal(this.fromValue$, {
+    initialValue: this.fromControl.value,
+  });
 
   amountValue = toSignal(
     this.amountControl.valueChanges.pipe(
       debounceTime(300),
       filter(() => this.amountControl.valid)
-      // take(1)
     ),
     { initialValue: this.amountControl.value }
   );
@@ -141,7 +124,6 @@ export class CurrencyFormComponent {
 
   currencyFormValue = computed(() => {
     return {
-      // amount: this.amountValue(),
       from: this.fromValue(),
       to: this.toValue(),
     };
@@ -162,10 +144,7 @@ export class CurrencyFormComponent {
     map((value) => Number(value)),
     map((value) => (value > 0 ? value : 0)),
     distinctUntilChanged()
-    // startWith(this.amountControl.value),
   );
-
-  // Validators section
 
   hasCurrencyValidator$ = this.currencyConverterForm.statusChanges.pipe(
     startWith(this.currencyConverterForm.status),
@@ -195,6 +174,15 @@ export class CurrencyFormComponent {
     distinctUntilChanged()
   );
 
+  saveControlsValues$ = combineLatest([
+    toObservable(this.toValue),
+    toObservable(this.fromValue),
+    toObservable(this.amountValue).pipe(debounceTime(300)),
+  ]).pipe(
+    filter(() => this.currencyConverterForm.valid && this.amountControl.valid),
+    map(([to, from, amount]) => ({ to, from, amount }))
+  );
+
   constructor() {
     this.convertTrigger$.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.convertChanged.emit(value);
@@ -205,8 +193,15 @@ export class CurrencyFormComponent {
       this.amountChanged.emit(value);
     });
 
-    this.currencySelectionChanged$.subscribe((value) => {
-      this.currencyChanged.emit(value);
+    this.currencySelectionChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => {
+        this.currencyChanged.emit(value);
+      });
+
+    this.saveControlsValues$.pipe(takeUntilDestroyed()).subscribe((value) => {
+      console.info("saveControlsValues", value);
+      this.#storageService.setToSession(this.#sessionKeys.FORM_VALUES, value);
     });
   }
 
