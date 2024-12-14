@@ -34,7 +34,7 @@ export class CurrencyFormService {
   }
 
   getAmountControl(): FormControl<string> {
-    return this.#nfb.control("", [
+    return this.#nfb.control("1", [
       Validators.required,
       Validators.pattern(/^[1-9][0-9]*$/),
     ]);
