@@ -24,7 +24,7 @@ export class CurrencyHttpService {
       loader: async ({ request }) => {
         const date = oneWeekAgo();
         const symbols = request.symbols;
-        const url = `${this.BASE_URL}/${date}?&symbols=${symbols}`;
+        const url = `${this.BASE_URL}/${date}..?&symbols=${symbols}`;
         const data = await fetch(url).then((res) => res.json());
         return data;
       },
