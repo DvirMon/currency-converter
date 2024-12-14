@@ -5,12 +5,20 @@ import {
   effect,
   ElementRef,
   inject,
+  input,
   PLATFORM_ID,
   signal,
   untracked,
   viewChild,
 } from "@angular/core";
-import { Chart, ChartItem, ChartTypeRegistry, registerables } from "chart.js";
+import {
+  Chart,
+  ChartData,
+  ChartItem,
+  ChartOptions,
+  ChartTypeRegistry,
+  registerables,
+} from "chart.js";
 
 @Component({
   selector: "app-chart",
@@ -20,42 +28,55 @@ import { Chart, ChartItem, ChartTypeRegistry, registerables } from "chart.js";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartComponent {
+  platformId = inject(PLATFORM_ID);
 
-  #chartOptions = {
+  chartData = input<ChartData>({} as ChartData);
+  type = input<keyof ChartTypeRegistry>("line");
+
+  chartCanvas = viewChild("currencyChart", { read: ElementRef });
+
+  chartRef = signal<Chart<keyof ChartTypeRegistry, unknown[], unknown> | null>(
+    null
+  );
+
+  chartOptions = input<ChartOptions>({
+    aspectRatio: 2.5,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: {
-          color: "#FFFFFF",
-        },
+        display: false,
+      },
+      tooltip: {
+        // TODO - check callbacks api
+        enabled: true,
+        // callbacks: {
+        //   label: function (context: { raw: string; label: string }) {
+        //     // Customize tooltip text
+        //     return `${context.raw} on ${context.label}`;
+        //   },
+        // },
       },
     },
     scales: {
       x: {
+        grid: {
+          display: false,
+        },
         ticks: {
           color: "#FFFFFF",
-        },
-        grid: {
-          color: "#666666",
         },
       },
       y: {
+        grid: {
+          color: "rgba(255, 255, 255, 0.2)",
+        },
         ticks: {
           color: "#FFFFFF",
         },
-        grid: {
-          color: "#666666",
-        },
       },
     },
-  };
-
-  platformId = inject(PLATFORM_ID);
-
-  chartCanvas = viewChild("currencyChart", { read: ElementRef });
-  chartRef = signal<Chart<keyof ChartTypeRegistry, number[], string> | null>(
-    null
-  );
+  });
 
   constructor() {
     effect(() => {
@@ -63,9 +84,16 @@ export class ChartComponent {
         Chart.register(...registerables);
         const canvas = this.chartCanvas();
         const chartRef = untracked(() => this.chartRef());
+        const type = this.type();
+        const data = this.chartData();
+        const options = this.chartOptions();
 
         if (chartRef === null) {
-          const chart = this.createChart("line", canvas?.nativeElement);
+          const chart = this.createChart(canvas?.nativeElement, {
+            type,
+            data,
+            options
+          });
           this.chartRef.set(chart);
         }
       }
@@ -73,39 +101,23 @@ export class ChartComponent {
   }
 
   createChart(
-    type: keyof ChartTypeRegistry,
-    item: ChartItem
-  ): Chart<keyof ChartTypeRegistry, number[], string> {
+    item: ChartItem,
+    config: {
+      type: keyof ChartTypeRegistry;
+      data: ChartData;
+      options? : ChartOptions
+    }
+  ): Chart<keyof ChartTypeRegistry, unknown[], unknown> {
+    const { type, data, options } = config;
+
     return new Chart(item, {
       type,
 
       data: {
-        // values on X-Axis
-        labels: [
-          "2022-05-10",
-          "2022-05-11",
-          "2022-05-12",
-          "2022-05-13",
-          "2022-05-14",
-          "2022-05-15",
-          "2022-05-16",
-          "2022-05-17",
-        ],
-
-        datasets: [
-          {
-            label: "EUR Rates",
-            data: [0.91, 0.92, 0.93, 0.94],
-            borderColor: "#810081", // Green
-            backgroundColor: "rgba(51, 255, 87, 0.2)", // Transparent green fill
-            pointBackgroundColor: "#810081",
-            pointBorderColor: "#FFFFFF",
-          },
-        ],
+        ...data,
       },
       options: {
-        aspectRatio: 2.5,
-        ...this.#chartOptions,
+        ...options
       },
     });
   }
