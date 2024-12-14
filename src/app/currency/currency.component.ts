@@ -21,6 +21,7 @@ import {
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
 import { ExchangeRatesResponse } from "./data-access/currency.model";
+import { ChartComponent } from "../chart/chart.component";
 
 @Component({
   selector: "app-currency",
@@ -32,6 +33,7 @@ import { ExchangeRatesResponse } from "./data-access/currency.model";
     MatSelectModule,
     CurrencyFormComponent,
     CurrencyResultComponent,
+    ChartComponent
   ],
   templateUrl: "./currency.component.html",
   styleUrl: "./currency.component.scss",
