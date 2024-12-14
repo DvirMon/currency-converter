@@ -7,3 +7,16 @@ export interface ExchangeRatesResponse {
   date: string;
   rates: Record<string, number>; 
 }
+
+
+export interface ExchangeRateRangeResponse {
+  amount: number;
+  base: string;
+  start_date: string;
+  end_date: string;
+  rates: {
+    [date: string]: {
+      [currency: string]: number;
+    };
+  };
+}

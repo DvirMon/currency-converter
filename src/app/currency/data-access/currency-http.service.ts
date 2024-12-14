@@ -1,5 +1,9 @@
 import { Injectable, resource, ResourceRef, Signal } from "@angular/core";
-import { ExchangeRatesResponse } from "./currency.model";
+import { oneWeekAgo } from "../../shared/utils/one-week-ago";
+import {
+  ExchangeRateRangeResponse,
+  ExchangeRatesResponse,
+} from "./currency.model";
 
 @Injectable({ providedIn: "root" })
 export class CurrencyHttpService {
@@ -9,7 +13,25 @@ export class CurrencyHttpService {
     return this.#currencyListResource;
   }
 
-  called = 1;
+  BASE_URL = "https://api.frankfurter.dev/v1";
+
+  fetchChartData(
+    symbols: Signal<string>
+  ): ResourceRef<ExchangeRateRangeResponse> {
+    // const { from, to } = symbols;
+    return resource({
+      request: () => ({ symbols: symbols() }),
+      loader: async ({ request }) => {
+        const date = oneWeekAgo();
+        const symbols = request.symbols;
+        const url = `${this.BASE_URL}/${date}..?&symbols=${symbols}`;
+        const data = await fetch(url).then((res) => res.json());
+        return data;
+      },
+    });
+  }
+
+// TODO - update url with this https://api.frankfurter.dev/v1/currencies
 
   fetchCurrencyList(): ResourceRef<string[]> {
     return resource({
@@ -23,20 +45,17 @@ export class CurrencyHttpService {
   }
 
   fetchCurrencyRates(
-    params: Signal<{ from: string; to: string } | undefined>
+    symbols: Signal<{ from: string; to: string } | undefined>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
       request: () => ({
-        params: params(),
+        params: symbols(),
       }),
       loader: async ({ request }) => {
-
-        // console.info("currency rates called", this.called); ;
-        ++this.called;
         if (request.params) {
           const { to, from } = request.params;
           const data = await fetch(
-            `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`
+            `${this.BASE_URL}/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
           return data;
         }

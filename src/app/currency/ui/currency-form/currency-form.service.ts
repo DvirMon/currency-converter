@@ -1,6 +1,7 @@
 import { inject } from "@angular/core";
 import {
   AbstractControl,
+  FormControl,
   NonNullableFormBuilder,
   ValidationErrors,
   ValidatorFn,
@@ -23,12 +24,19 @@ export class CurrencyFormService {
       {
         from: this.#nfb.control("", [Validators.required]),
         to: this.#nfb.control("USD", [Validators.required]),
-        amount: this.#nfb.control("", [
-          Validators.required,
-          Validators.pattern(/^[1-9][0-9]*$/),
-        ]),
+        // amount: this.#nfb.control("", [
+        //   Validators.required,
+        //   Validators.pattern(/^[1-9][0-9]*$/),
+        // ]),
       },
       { validators: [differentCurrenciesValidator()] }
     );
+  }
+
+  getAmountControl(): FormControl<string> {
+    return this.#nfb.control("1", [
+      Validators.required,
+      Validators.pattern(/^[1-9][0-9]*$/),
+    ]);
   }
 }

@@ -4,7 +4,6 @@ import {
   computed,
   effect,
   inject,
-  linkedSignal,
   signal,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -18,9 +17,13 @@ import {
   HistoryRecord,
   HistoryService,
 } from "../history/data-access/history.service";
+import {
+  ExchangeRateRangeResponse,
+  ExchangeRatesResponse,
+} from "./data-access/currency.model";
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
+import { CurrencyLineChartComponent } from "./ui/currency-line-chart/currency-line-chart.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
-import { ExchangeRatesResponse } from "./data-access/currency.model";
 
 @Component({
   selector: "app-currency",
@@ -32,6 +35,7 @@ import { ExchangeRatesResponse } from "./data-access/currency.model";
     MatSelectModule,
     CurrencyFormComponent,
     CurrencyResultComponent,
+    CurrencyLineChartComponent,
   ],
   templateUrl: "./currency.component.html",
   styleUrl: "./currency.component.scss",
@@ -43,6 +47,33 @@ export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
 
+  rates: ExchangeRateRangeResponse = {
+    amount: 1.0,
+    base: "EUR",
+    start_date: "2024-12-06",
+    end_date: "2024-12-13",
+    rates: {
+      "2024-12-06": {
+        USD: 1.0581,
+      },
+      "2024-12-09": {
+        USD: 1.0568,
+      },
+      "2024-12-10": {
+        USD: 1.0527,
+      },
+      "2024-12-11": {
+        USD: 1.0507,
+      },
+      "2024-12-12": {
+        USD: 1.0491,
+      },
+      "2024-12-13": {
+        USD: 1.0518,
+      },
+    },
+  };
+
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
   convertTrigger = signal<
@@ -53,20 +84,24 @@ export class CurrencyComponent {
     | undefined
   >(undefined);
 
-  amount = signal<number>(0);
+  amount = signal<number>(1);
+
+  selectedCurrencySymbol = signal<string>("USD");
+
+  currencyListResource = this.#currencyHttpService.getCurrencyList();
 
   ratesResource = this.#currencyHttpService.fetchCurrencyRates(
     this.convertTrigger
   );
 
-  rate = computed(() => this.ratesResource.value()?.rates);
+  currencyRatesResource = this.#currencyHttpService.fetchChartData(
+    this.selectedCurrencySymbol
+  );
 
   to = computed(() => {
     const data = this.convertTrigger();
     return data ? data.to : "USD";
   });
-
-  // history = computed(() => {});
 
   constructor() {
     effect(() => {
@@ -75,7 +110,7 @@ export class CurrencyComponent {
 
       if (data && amount) {
         const record = { ...data, amount };
-        console.info("history", record);
+        // console.info("history", record);
         this.#historyService.updateRecordHistory(
           this.#transformSourceToHistory(record)
         );
@@ -100,6 +135,10 @@ export class CurrencyComponent {
   onAmountChanged(amount: number) {
     // console.info("history amount", this.convertTrigger(), amount);
     this.amount.set(amount);
+  }
+
+  onCurrencySelectionChanged(symbol: string) {
+    this.selectedCurrencySymbol.set(symbol);
   }
 
   #transformSourceToHistory(source: ExchangeRatesResponse): HistoryRecord {
