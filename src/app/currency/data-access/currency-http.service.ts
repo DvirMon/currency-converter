@@ -23,16 +23,14 @@ export class CurrencyHttpService {
   }
 
   fetchCurrencyRates(
-    params: Signal<{ from: string; to: string } | undefined>
+    symbols: Signal<{ from: string; to: string } | undefined>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
       request: () => ({
-        params: params(),
+        params: symbols(),
       }),
       loader: async ({ request }) => {
 
-        // console.info("currency rates called", this.called); ;
-        ++this.called;
         if (request.params) {
           const { to, from } = request.params;
           const data = await fetch(
