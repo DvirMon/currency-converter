@@ -67,6 +67,7 @@ export class CurrencyComponent {
     this.convertTrigger
   );
 
+
   currencyRatesResource = this.#currencyHttpService.fetchChartData(
     this.selectedCurrencySymbol
   );
