@@ -67,6 +67,7 @@ export class CurrencyComponent {
     this.convertTrigger
   );
 
+
   currencyRatesResource = this.#currencyHttpService.fetchChartData(
     this.selectedCurrencySymbol
   );
@@ -83,7 +84,6 @@ export class CurrencyComponent {
 
       if (data && amount) {
         const record = { ...data, amount };
-        // console.info("history", record);
         this.#historyService.updateRecordHistory(
           this.#transformSourceToHistory(record)
         );
@@ -100,13 +100,11 @@ export class CurrencyComponent {
       | undefined
   ) {
     if (event) {
-      // console.info("history trigger", event, this.amount());
       this.convertTrigger.update(() => ({ ...event }));
     }
   }
 
   onAmountChanged(amount: number) {
-    // console.info("history amount", this.convertTrigger(), amount);
     this.amount.set(amount);
   }
 

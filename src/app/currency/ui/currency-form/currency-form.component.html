@@ -13,9 +13,7 @@
         <!-- <mat-select formControlName="from" (selectionChange)="onCurrencySelectionChanged($event)"> -->
         <mat-select formControlName="from">
           @for(item of currencyList() | keyvalue; track item.key) {
-          <mat-option [value]="item.key"
-            >{{ item.value }}</mat-option
-          >
+          <mat-option [value]="item.key">{{ item.value }}</mat-option>
           }
         </mat-select>
         <mat-error>Currency is required</mat-error>
