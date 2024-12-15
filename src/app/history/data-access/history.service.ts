@@ -2,6 +2,7 @@ import {
   effect,
   inject,
   Injectable,
+  linkedSignal,
   signal,
   WritableSignal,
 } from "@angular/core";
@@ -28,7 +29,8 @@ export class HistoryService {
 
   constructor() {
     effect(() => {
-      this.#saveToSession();
+      const history = this.#recordHistory();
+      // this.#storageService.setToSession(this.#sessionKeys.HISTORY, history);
     });
   }
 
@@ -39,10 +41,11 @@ export class HistoryService {
     return this.#recordHistory;
   }
 
-  #saveToSession() {
-    this.#storageService.setToSession(
-      this.#sessionKeys.HISTORY,
-      this.#recordHistory()
+  getSessionHistory(): HistoryRecord[] {
+    const history = this.#storageService.getFromSession<HistoryRecord[]>(
+      this.#sessionKeys.HISTORY
     );
+
+    return !!history ? [...history] : [];
   }
 }

@@ -48,16 +48,16 @@ export class CurrencyFormService {
     to: string;
     amount: number;
   } {
-    const formSessionData = this.#storageService.getFromSession<{
-      from: string;
-      to: string;
-      amount: number;
-    }>(this.#sessionKeys.FORM_VALUES);
+    // const formSessionData = this.#storageService.getFromSession<{
+    //   from: string;
+    //   to: string;
+    //   amount: number;
+    // }>(this.#sessionKeys.FORM_VALUES);
 
     return {
-      from: formSessionData?.from || "",
-      to: formSessionData?.to || "",
-      amount: formSessionData?.amount || 1,
+      from: "",
+      to: "",
+      amount: 1,
     };
   }
 }
