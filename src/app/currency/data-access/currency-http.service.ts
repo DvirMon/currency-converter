@@ -46,13 +46,12 @@ export class CurrencyHttpService {
   }
 
   fetchCurrencyRates(
-    symbols: Signal<{ from: string; to: string } | undefined>
+    symbols: Signal<{ from: string; to: string } | null>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
       request: () => symbols(),
       loader: async ({ request: symbols }) => {
-        // const { from, to } = symbols;
-        if (symbols) {
+        if (symbols && symbols.from && symbols.to) {
           const { to, from } = symbols;
           const data = await fetch(
             `${this.#BASE_URL}/latest?base=${from}&symbols=${to}`
@@ -60,7 +59,7 @@ export class CurrencyHttpService {
           return data;
         }
 
-        return Promise.resolve({});
+        return Promise.resolve(null);
       },
     });
   }

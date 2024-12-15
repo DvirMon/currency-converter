@@ -9,6 +9,7 @@ import {
 } from "@angular/forms";
 import { SESSION_KEYS } from "../../../shared/services/storage.keys";
 import { StorageService } from "../../../shared/services/storage.service";
+import { CurrencyService } from "../../currency.service";
 
 export function differentCurrenciesValidator(): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -21,9 +22,8 @@ export function differentCurrenciesValidator(): ValidatorFn {
 export class CurrencyFormService {
   #nfb = inject(NonNullableFormBuilder);
 
-  #storageService = inject(StorageService);
+  #currencyService = inject(CurrencyService);
 
-  #sessionKeys = inject(SESSION_KEYS);
 
   defaultValues = this.#getFormDefaults();
   createCurrencyConverterForm() {
@@ -48,16 +48,6 @@ export class CurrencyFormService {
     to: string;
     amount: number;
   } {
-    // const formSessionData = this.#storageService.getFromSession<{
-    //   from: string;
-    //   to: string;
-    //   amount: number;
-    // }>(this.#sessionKeys.FORM_VALUES);
-
-    return {
-      from: "",
-      to: "",
-      amount: 1,
-    };
+    return this.#currencyService.getFormHistory();
   }
 }

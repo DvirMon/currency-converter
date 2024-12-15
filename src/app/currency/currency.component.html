@@ -1,8 +1,8 @@
 <div class="page-currency-wrapper">
   <app-currency-form
+    [(amount)]="amount"
+    [(convert)]="convert"
     [currencyList]="currencyListResource.value()"
-    (convertChanged)="onConvertChanged($event)"
-    (amountChanged)="onAmountChanged($event)"
     (currencyChanged)="onCurrencySelectionChanged($event)"></app-currency-form>
 
   <app-currency-result

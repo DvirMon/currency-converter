@@ -1,12 +1,12 @@
-import { isPlatformBrowser, KeyValuePipe } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
   input,
+  model,
   output,
-  PLATFORM_ID,
 } from "@angular/core";
 import {
   takeUntilDestroyed,
@@ -25,10 +25,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import {
   combineLatest,
-  debounceTime,
   distinctUntilChanged,
   filter,
-  from,
   iif,
   map,
   merge,
@@ -37,10 +35,10 @@ import {
   switchMap,
   tap,
 } from "rxjs";
+import { SESSION_KEYS } from "../../../shared/services/storage.keys";
+import { StorageService } from "../../../shared/services/storage.service";
 import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
-import { StorageService } from "../../../shared/services/storage.service";
-import { SESSION_KEYS } from "../../../shared/services/storage.keys";
 
 @Component({
   selector: "app-currency-form",
@@ -59,20 +57,15 @@ import { SESSION_KEYS } from "../../../shared/services/storage.keys";
 export class CurrencyFormComponent {
   #currencyFormService = inject(CurrencyFormService);
 
-  #storageService = inject(StorageService);
-
-  #sessionKeys = inject(SESSION_KEYS);
-
   currencyList = input<CurrencyList | undefined>({});
 
-  convertChanged = output<
-    | {
-        from: string;
-        to: string;
-      }
-    | undefined
-  >();
-  amountChanged = output<number>();
+  convert = model<{
+    from: string;
+    to: string;
+  } | null>();
+  // amountChanged = output<number>();
+
+  amount = model<number>();
 
   currencyChanged = output<string>();
 
@@ -92,7 +85,7 @@ export class CurrencyFormComponent {
   );
 
   amountValue$ = this.amountControl.valueChanges.pipe(
-    startWith(this.amountControl.value),
+    // startWith(this.amountControl.value),
     map((value) => Number(value)),
     map((value) => (value > 0 ? value : 0)),
     distinctUntilChanged()
@@ -106,13 +99,6 @@ export class CurrencyFormComponent {
     initialValue: this.fromControl.value,
   });
 
-  // amountValue = toSignal(
-  //   this.amountControl.valueChanges.pipe(
-  //     debounceTime(300),
-  //     filter(() => this.amountControl.valid)
-  //   ),
-  //   { initialValue: this.amountControl.value }
-  // );
   amountValue = toSignal(this.amountValue$, {
     initialValue: +this.amountControl.value,
   });
@@ -139,7 +125,7 @@ export class CurrencyFormComponent {
 
   currencyFormValues$ = toObservable(this.currencyFormValue);
 
-  convertTrigger$ = this.currencyFormValues$.pipe(
+  convertTrigger$ = this.currencyConverterForm.valueChanges.pipe(
     filter(() => this.currencyConverterForm.valid),
     tap(() => {
       if (!this.amountControl.valid) {
@@ -179,25 +165,15 @@ export class CurrencyFormComponent {
   );
 
   //TODO - emit amount only when form is valid
-  amountChanged$ = toObservable(this.amountValue);
-  
-  //TODO - emit amount with debounce
-  saveControlsValues$ = combineLatest([
-    toObservable(this.toValue),
-    toObservable(this.fromValue),
-    toObservable(this.amountValue)
-  ]).pipe(
-    filter(() => this.currencyConverterForm.valid && this.amountControl.valid),
-    map(([to, from, amount]) => ({ to, from, amount }))
-  );
+  // #amountChanged$ = toObservable(this.amountValue);
 
   constructor() {
     this.convertTrigger$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      this.convertChanged.emit(value);
+      this.convert.update(() => value as { from: string; to: string });
     });
 
-    this.amountChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
-      this.amountChanged.emit(value);
+    this.amountValue$.pipe(takeUntilDestroyed()).subscribe((value) => {
+      this.amount.update(() => value);
     });
 
     this.currencySelectionChanged$
@@ -205,10 +181,6 @@ export class CurrencyFormComponent {
       .subscribe((value) => {
         this.currencyChanged.emit(value);
       });
-
-    this.saveControlsValues$.pipe(takeUntilDestroyed()).subscribe((values) => {
-      this.#storageService.setToSession(this.#sessionKeys.FORM_VALUES, values);
-    });
   }
 
   setErrorMessage(control: FormControl<unknown>) {

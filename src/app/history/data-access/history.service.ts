@@ -29,13 +29,19 @@ export class HistoryService {
 
   constructor() {
     effect(() => {
-      const history = this.#recordHistory();
-      // this.#storageService.setToSession(this.#sessionKeys.HISTORY, history);
+      this.#storageService.setToSession(
+        this.#sessionKeys.HISTORY,
+        this.#recordHistory()
+      );
     });
   }
 
   updateRecordHistory(record: HistoryRecord): void {
-    this.#recordHistory.update((recordHistory) => [...recordHistory, record]);
+    this.#recordHistory.update((recordHistory) =>
+      this.#compareTo(recordHistory[recordHistory.length - 1], record)
+        ? recordHistory
+        : [...recordHistory, record]
+    );
   }
   getRecordHistory(): WritableSignal<HistoryRecord[]> {
     return this.#recordHistory;
@@ -47,5 +53,17 @@ export class HistoryService {
     );
 
     return !!history ? [...history] : [];
+  }
+
+  getSessionRecordHistory(): HistoryRecord | null {
+    const historyRecords = this.getSessionHistory();
+    if (historyRecords.length > 0) {
+      return historyRecords[historyRecords.length - 1];
+    }
+    return null;
+  }
+
+  #compareTo(record1: HistoryRecord, record2: HistoryRecord): boolean {
+    return JSON.stringify(record1) === JSON.stringify(record2);
   }
 }
