@@ -6,27 +6,27 @@ import { SESSION_KEYS, SessionKeys } from "./storage.keys";
   providedIn: "root",
 })
 export class StorageService {
-  platformId = inject(PLATFORM_ID);
-  sessionKeys = inject(SESSION_KEYS);
+  #platformId = inject(PLATFORM_ID);
+  #sessionKeys = inject(SESSION_KEYS);
 
-  idleCallbackId: number | null = null;
+  #idleCallbackMap: Map<string, number> = new Map();
 
   setToSession<T>(key: string, data: T): void {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.#platformId)) {
       return;
     }
     this.#scheduleSaveToSession(key, data);
   }
 
   removeFromSession(key: string): void {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.#platformId)) {
       return;
     }
     sessionStorage.removeItem(key);
   }
 
   getFromSession<T>(key: string): T | null {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!isPlatformBrowser(this.#platformId)) {
       return null;
     }
     const data = sessionStorage.getItem(key);
@@ -34,12 +34,15 @@ export class StorageService {
   }
 
   #scheduleSaveToSession(key: string, data: unknown): void {
-    if (this.idleCallbackId !== null) {
-      cancelIdleCallback(this.idleCallbackId);
+    const existingId = this.#idleCallbackMap.get(key);
+    if (existingId !== undefined) {
+      cancelIdleCallback(existingId);
     }
 
-    this.idleCallbackId = requestIdleCallback(() => {
+    const newId = requestIdleCallback(() => {
       sessionStorage.setItem(key, JSON.stringify(data));
     });
+
+    this.#idleCallbackMap.set(key, newId);
   }
 }
