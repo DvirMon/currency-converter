@@ -23,17 +23,16 @@ export class CurrencyHttpService {
   ): ResourceRef<ExchangeRateRangeResponse> {
     // const { from, to } = symbols;
     return resource({
-      request: () => ({ symbols: symbols() }),
-      loader: async ({ request }) => {
+      request: () => symbols(),
+      loader: async ({ request: symbols }) => {
         const date = oneWeekAgo();
-        const symbols = request.symbols;
+        // const symbols = symbols;
         const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
         const data = await fetch(url).then((res) => res.json());
         return data;
       },
     });
   }
-
 
   fetchCurrencyList(): ResourceRef<CurrencyList> {
     return resource({
@@ -50,17 +49,18 @@ export class CurrencyHttpService {
     symbols: Signal<{ from: string; to: string } | undefined>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
-      request: () => ({
-        params: symbols(),
-      }),
-      loader: async ({ request }) => {
-        if (request.params) {
-          const { to, from } = request.params;
+      request: () => symbols(),
+      loader: async ({ request: symbols }) => {
+        // const { from, to } = symbols;
+        if (symbols) {
+          const { to, from } = symbols;
           const data = await fetch(
             `${this.#BASE_URL}/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
           return data;
         }
+
+        return Promise.resolve({});
       },
     });
   }
