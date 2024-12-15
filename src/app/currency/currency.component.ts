@@ -24,6 +24,10 @@ import {
 import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
 import { CurrencyLineChartComponent } from "./ui/currency-line-chart/currency-line-chart.component";
 import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
+import { StorageService } from "../shared/services/storage.service";
+import { SESSION_KEYS } from "../shared/services/storage.keys";
+import { toObservable } from "@angular/core/rxjs-interop";
+import { CurrencyService } from "./currency.service";
 
 @Component({
   selector: "app-currency",
@@ -46,6 +50,8 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
 export class CurrencyComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
+  #currencyService = inject(CurrencyService);
+
 
   currencyResource = this.#currencyHttpService.getCurrencyList();
 
@@ -57,7 +63,7 @@ export class CurrencyComponent {
     | undefined
   >(undefined);
 
-  amount = signal<number>(1);
+  amount = signal<number>(this.#currencyService.getAmountHistory());
 
   selectedCurrencySymbol = signal<string>("USD");
 
@@ -66,7 +72,6 @@ export class CurrencyComponent {
   ratesResource = this.#currencyHttpService.fetchCurrencyRates(
     this.convertTrigger
   );
-
 
   currencyRatesResource = this.#currencyHttpService.fetchChartData(
     this.selectedCurrencySymbol
@@ -77,18 +82,39 @@ export class CurrencyComponent {
     return data ? data.to : "USD";
   });
 
-  constructor() {
-    effect(() => {
-      const data = this.ratesResource.value();
-      const amount = this.amount();
+  historyRecord = computed(() => {
+    const data = this.ratesResource.value();
+    const amount = this.amount();
 
-      if (data && amount) {
-        const record = { ...data, amount };
-        this.#historyService.updateRecordHistory(
-          this.#transformSourceToHistory(record)
-        );
-      }
-    });
+    if (data && amount) {
+      const record = { ...data, amount };
+      return this.#transformSourceToHistory(record);
+    }
+
+    return null;
+  });
+
+  // historyRecordChanged$ = toObservable(this.historyRecord);
+
+  constructor() {
+    // effect(() => {
+    //   const data = this.ratesResource.value();
+    //   const amount = this.amount();
+    //   if (data && amount) {
+    //     console.log("emit history");
+    //     const record = { ...data, amount };
+    //     this.#historyService.updateRecordHistory(
+    //       this.#transformSourceToHistory(record)
+    //     );
+    //   }
+    // });
+    // effect(() => {
+    //   const record = this.historyRecord();
+    //   if (record) {
+    //     console.log("emit history");
+    //     this.#historyService.updateRecordHistory(record);
+    //   }
+    // });
   }
 
   onConvertChanged(
@@ -100,12 +126,16 @@ export class CurrencyComponent {
       | undefined
   ) {
     if (event) {
+      console.log("selection changed", event);
       this.convertTrigger.update(() => ({ ...event }));
     }
+    // this.updateHistory();
   }
 
   onAmountChanged(amount: number) {
+    console.log("amount changed", amount);
     this.amount.set(amount);
+    // this.updateHistory();
   }
 
   onCurrencySelectionChanged(symbol: string) {
@@ -122,5 +152,14 @@ export class CurrencyComponent {
         value,
       })),
     };
+  }
+
+  updateHistory() {
+    const record = this.historyRecord();
+    console.log(record);
+    if (record) {
+      console.log("emit history");
+      this.#historyService.updateRecordHistory(record);
+    }
   }
 }
