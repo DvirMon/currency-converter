@@ -180,11 +180,12 @@ export class CurrencyFormComponent {
 
   //TODO - emit amount only when form is valid
   amountChanged$ = toObservable(this.amountValue);
-
+  
+  //TODO - emit amount with debounce
   saveControlsValues$ = combineLatest([
     toObservable(this.toValue),
     toObservable(this.fromValue),
-    toObservable(this.amountValue).pipe(debounceTime(300)),
+    toObservable(this.amountValue)
   ]).pipe(
     filter(() => this.currencyConverterForm.valid && this.amountControl.valid),
     map(([to, from, amount]) => ({ to, from, amount }))
