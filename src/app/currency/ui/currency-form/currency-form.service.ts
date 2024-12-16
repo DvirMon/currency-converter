@@ -10,7 +10,17 @@ import {
   ValidatorFn,
   Validators,
 } from "@angular/forms";
-import { filter, iif, map, merge, of, startWith, switchMap, tap } from "rxjs";
+import {
+  filter,
+  iif,
+  map,
+  merge,
+  of,
+  startWith,
+  switchMap,
+  take,
+  tap,
+} from "rxjs";
 import { HistoryService } from "../../data-access/history.service";
 
 export function differentCurrenciesValidator(): ValidatorFn {
@@ -74,8 +84,10 @@ export class CurrencyFormService {
     }>,
     amountControl: FormControl<number>
   ): Signal<string | undefined> {
-    const hasSameCurrencyError$ = currencyForm.statusChanges.pipe(
-      startWith(currencyForm.status),
+    const hasSameCurrencyError$ = merge(
+      currencyForm.valueChanges,
+      currencyForm.statusChanges
+    ).pipe(
       map(() => currencyForm.errors),
       map((errors) => errors && errors["sameCurrency"])
     );
@@ -90,11 +102,18 @@ export class CurrencyFormService {
                 { sameCurrency: true },
                 { emitEvent: false }
               );
-              currencyForm.controls.from.markAsTouched();
+              currencyForm.controls.from.markAsTouched({ emitEvent: false });
             }),
             tap(() => amountControl.disable({ emitEvent: false }))
           ),
-          of("").pipe(tap(() => amountControl.enable()))
+          of("").pipe(
+            tap(() => amountControl.enable({ emitEvent: false })),
+            tap(() =>
+              currencyForm.controls.from.updateValueAndValidity({
+                emitEvent: false
+              })
+            )
+          )
         )
       )
     );
