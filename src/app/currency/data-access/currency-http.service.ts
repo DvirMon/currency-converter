@@ -27,9 +27,14 @@ export class CurrencyHttpService {
       loader: async ({ request: symbols }) => {
         const date = oneWeekAgo();
         // const symbols = symbols;
-        const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
-        const data = await fetch(url).then((res) => res.json());
-        return data;
+
+        if (symbols) {
+          const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
+          const data = await fetch(url).then((res) => res.json());
+          return data;
+        }
+
+        return Promise.resolve(null);
       },
     });
   }
