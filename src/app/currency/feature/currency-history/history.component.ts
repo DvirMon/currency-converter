@@ -1,20 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { HistoryService } from "../../data-access/history.service";
-import { CurrencyHistoryTableComponent } from "../../ui/currency-history-table/currency-history-table.component";
-import { CurrencyRecordCardComponent } from "../../ui/currency-record-card/currency-record-card.component";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { Observable, map, shareReplay } from "rxjs";
+import { Observable, map } from "rxjs";
+import { CurrencyStore } from "../../data-access/currency.store";
+import { CurrencyRecordCardComponent } from "../../ui/currency-record-card/currency-record-card.component";
+import { CurrencyRecordTableComponent } from "../../ui/currency-record-table/currency-record-table.component";
 
 @Component({
-  selector: "app-history",
-  imports: [CurrencyHistoryTableComponent, CurrencyRecordCardComponent],
+  selector: "app-currency-history",
+  imports: [CurrencyRecordTableComponent, CurrencyRecordCardComponent],
   templateUrl: "./history.component.html",
   styleUrl: "./history.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrencyHistoryComponent {
-  #historyService = inject(HistoryService);
+  #storeService = inject(CurrencyStore);
 
   #breakpointObserver = inject(BreakpointObserver);
 
@@ -24,7 +24,7 @@ export class CurrencyHistoryComponent {
 
   isHandset = toSignal(this.#isHandset$);
 
-  dataSource = this.#historyService.getRecordHistory();
+  dataSource = this.#storeService.history;
 
   displayedColumns: string[] = [
     "amount",

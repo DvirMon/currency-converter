@@ -1,7 +1,7 @@
 import { InjectionToken } from "@angular/core";
 
 export enum SessionKeys {
-  USER_DATA = "user_data",
+  LAST_SELECTED_CURRENCY = "last_selected_currency",
   // FORM_VALUES = "form_values",
   HISTORY = "history",
 }

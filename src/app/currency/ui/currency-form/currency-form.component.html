@@ -1,13 +1,6 @@
-<div class="form-wrapper">
-  <section>
-    <mat-form-field>
-      <input type="number" matInput [formControl]="amountControl" />
-      <mat-error>{{ amountErrorMessage() }}</mat-error>
-    </mat-form-field>
-  </section>
-
+<div class="form-currency-container">
   <form [formGroup]="currencyConverterForm">
-    <section>
+    <section class="section-wrapper">
       <span> From: </span>
       <mat-form-field>
         <mat-select
@@ -17,11 +10,14 @@
           <mat-option [value]="item.key">{{ item.value }}</mat-option>
           }
         </mat-select>
-        <mat-error>Currency is required</mat-error>
+        @if(currencyConverterForm.controls.from.hasError("sameCurrency")) {
+
+        <mat-error>{{ sameCurrencyValidatorErrorMessage() }} </mat-error>
+        }
       </mat-form-field>
     </section>
 
-    <section>
+    <section class="section-wrapper">
       <span> To: </span>
       <mat-form-field>
         <mat-select
@@ -34,9 +30,12 @@
         <mat-error>Currency is required</mat-error>
       </mat-form-field>
     </section>
+
+    <section>
+      <mat-form-field>
+        <input type="number" matInput [formControl]="amountControl" />
+        <mat-error>{{ amountErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </section>
   </form>
 </div>
-
-<mat-error class="same-currency-error">
-  {{ sameCurrencyValidatorErrorMessage() }}
-</mat-error>
