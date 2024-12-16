@@ -4,13 +4,17 @@ export const routes: Routes = [
   {
     path: "",
     loadComponent: () =>
-      import("./currency/currency.component").then((m) => m.CurrencyComponent),
+      import("./currency/feature/currency-dashboard/currency.component").then(
+        (m) => m.CurrencyDashboardComponent
+      ),
   },
 
   {
     path: "history",
     loadComponent: () =>
-      import("./history/history.component").then((m) => m.HistoryComponent),
+      import("./currency/feature/currency-history/history.component").then(
+        (m) => m.CurrencyHistoryComponent
+      ),
   },
 
   {

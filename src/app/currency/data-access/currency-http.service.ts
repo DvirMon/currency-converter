@@ -6,7 +6,7 @@ import {
   signal,
   Signal,
 } from "@angular/core";
-import { oneWeekAgo } from "../../shared/utils/one-week-ago";
+import { oneWeekAgo } from "../utils/one-week-ago";
 import {
   CurrencyList,
   ExchangeRateRangeResponse,

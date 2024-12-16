@@ -1,0 +1,25 @@
+@let datasource = dataSource();
+
+@if(isHandset()) {
+
+<div class="currency-record-card-container">
+  @for (record of datasource; track record) {
+  <section class="currency-record-card-wrapper">
+    <app-currency-record-card [record]="record"></app-currency-record-card>
+  </section>
+  }
+</div>
+} @else {
+
+<div class="currency-record-table-container">
+  <section class="currency-record-table-wrapper">
+
+
+    <h2>Conversion History - {{ datasource.length }}</h2>
+
+    <app-currency-history-table
+      [dataSource]="datasource"
+      [displayedColumns]="displayedColumns"></app-currency-history-table>
+  </section>
+</div>
+}

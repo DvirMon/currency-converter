@@ -2,9 +2,8 @@ import {
   effect,
   inject,
   Injectable,
-  linkedSignal,
   signal,
-  WritableSignal,
+  WritableSignal
 } from "@angular/core";
 import { SESSION_KEYS } from "../../shared/services/storage.keys";
 import { StorageService } from "../../shared/services/storage.service";
