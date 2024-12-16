@@ -23,29 +23,25 @@ import { MatCardModule } from "@angular/material/card";
   ],
 })
 export class CurrencyDashboardComponent {
-  private breakpointObserver = inject(BreakpointObserver);
+  card2 = { cols: 1, rows: 1 };
+  card3 = { cols: 1, rows: 2 };
+  card4 = { cols: 1, rows: 1 };
 
-  /** Based on the screen size, switch from standard to one column per row */
-  cards = this.breakpointObserver
-    .observe([Breakpoints.Handset, Breakpoints.Medium])
-    .pipe(
-      map(({ matches }) => {
-        console.log(matches);
+  constructor(private breakpointObserver: BreakpointObserver) {
+    this.breakpointObserver
+      .observe([Breakpoints.Handset, Breakpoints.Medium])
+      .subscribe(({ matches }) => {
         if (matches) {
-          return [
-            // { title: 'Card 1', cols: 1, rows: 1 },
-            { title: "Card 2", cols: 2, rows: 1 },
-            { title: "Card 3", cols: 2, rows: 1 },
-            { title: "Card 4", cols: 2, rows: 1 },
-          ];
+          // Adjust layout for small screens
+          this.card2 = { cols: 2, rows: 1 };
+          this.card3 = { cols: 2, rows: 1 };
+          this.card4 = { cols: 2, rows: 1 };
+        } else {
+          // Adjust layout for larger screens
+          this.card2 = { cols: 1, rows: 1 };
+          this.card3 = { cols: 1, rows: 2 };
+          this.card4 = { cols: 1, rows: 1 };
         }
-
-        return [
-          // { title: 'Card 1', cols: 2, rows: 1 },
-          { title: "Card 2", cols: 1, rows: 1 },
-          { title: "Card 3", cols: 1, rows: 2 },
-          { title: "Card 4", cols: 1, rows: 1 },
-        ];
-      })
-    );
+      });
+  }
 }
