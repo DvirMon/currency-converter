@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject
+  inject,
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -44,7 +44,6 @@ export class CurrencyDashboardComponent {
 
   amount = this.#currencyStore.amount;
 
-  //TODO = add history
   selectedSymbol = this.#currencyStore.selectedSymbol;
 
   ratesResource = this.#currencyStore.ratesResource;
@@ -53,6 +52,7 @@ export class CurrencyDashboardComponent {
 
   to = computed(() => {
     const data = this.convert();
-    return data ? data.to : "USD";
+    const { to } = data;
+    return to;
   });
 }
