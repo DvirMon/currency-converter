@@ -5,10 +5,11 @@ import {
   input,
 } from "@angular/core";
 import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
+import { CurrencyPipe } from "@angular/common";
 
 @Component({
   selector: "app-currency-result",
-  imports: [CurrencyConvertPipe],
+  imports: [CurrencyConvertPipe, CurrencyPipe],
   templateUrl: "./currency-result.component.html",
   styleUrl: "./currency-result.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
