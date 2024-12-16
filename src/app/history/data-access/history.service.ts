@@ -55,12 +55,36 @@ export class HistoryService {
     return !!history ? [...history] : [];
   }
 
-  getSessionRecordHistory(): HistoryRecord | null {
+  #getSessionRecordHistory(): HistoryRecord | null {
     const historyRecords = this.getSessionHistory();
     if (historyRecords.length > 0) {
       return historyRecords[historyRecords.length - 1];
     }
     return null;
+  }
+
+  getSessionAmountHistory(): number {
+    const record = this.#getSessionRecordHistory();
+    return record?.amount || 1;
+  }
+  getSessionFormHistory() {
+    return {
+      ...this.getSessionConvertHistory(),
+      amount: this.getSessionAmountHistory(),
+    };
+  }
+
+  getSessionConvertHistory() {
+    const record = this.#getSessionRecordHistory();
+    return record
+      ? {
+          from: record?.base,
+          to: record?.rates[0].code,
+        }
+      : {
+          from: "",
+          to: "",
+        };
   }
 
   #compareTo(record1: HistoryRecord, record2: HistoryRecord): boolean {

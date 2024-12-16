@@ -11,7 +11,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { filter, iif, map, merge, of, startWith, switchMap, tap } from "rxjs";
-import { CurrencyService } from "../../currency.service";
+import { HistoryService } from "../../../history/data-access/history.service";
 
 export function differentCurrenciesValidator(): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -24,7 +24,7 @@ export function differentCurrenciesValidator(): ValidatorFn {
 export class CurrencyFormService {
   #nfb = inject(NonNullableFormBuilder);
 
-  #currencyService = inject(CurrencyService);
+  #historyService = inject(HistoryService);
 
   defaultValues = this.#getFormDefaults();
   createCurrencyConverterForm() {
@@ -49,7 +49,7 @@ export class CurrencyFormService {
     to: string;
     amount: number;
   } {
-    return this.#currencyService.getFormHistory();
+    return this.#historyService.getSessionFormHistory();
   }
 
   setAmountErrorMessage(amountControl: FormControl<number>) {
