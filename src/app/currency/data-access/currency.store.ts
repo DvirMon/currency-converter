@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { HistoryService } from "../feature/currency-history/data-access/history.service";
+import { HistoryService } from "./history.service";
 
 @Injectable({ providedIn: "root" })
 export class CurrencyStore {

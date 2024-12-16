@@ -2,7 +2,7 @@ import { CurrencyPipe, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
-import { HistoryService } from "./data-access/history.service";
+import { HistoryService } from "../../data-access/history.service";
 
 @Component({
   selector: "app-history",

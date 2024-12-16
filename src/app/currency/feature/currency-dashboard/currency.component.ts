@@ -3,8 +3,7 @@ import {
   Component,
   computed,
   effect,
-  inject,
-  signal,
+  inject
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -13,12 +12,10 @@ import { MatSelectModule } from "@angular/material/select";
 import { CurrencyHttpService } from "../../data-access/currency-http.service";
 import { CurrencyFormService } from "../../ui/currency-form/currency-form.service";
 
-import {
-  HistoryRecord,
-  HistoryService,
-} from "../currency-history/data-access/history.service";
+
 import { ExchangeRatesResponse } from "../../data-access/currency.model";
 import { CurrencyStore } from "../../data-access/currency.store";
+import { HistoryRecord, HistoryService } from "../../data-access/history.service";
 import { CurrencyFormComponent } from "../../ui/currency-form/currency-form.component";
 import { CurrencyLineChartComponent } from "../../ui/currency-line-chart/currency-line-chart.component";
 import { CurrencyResultComponent } from "../../ui/currency-result/currency-result.component";
