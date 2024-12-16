@@ -2,41 +2,28 @@ import { KeyValuePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
-  model,
-  output,
+  model
 } from "@angular/core";
 import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
+  takeUntilDestroyed
 } from "@angular/core/rxjs-interop";
 import {
   FormControl,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule,
-  TouchedChangeEvent,
+  ReactiveFormsModule
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import {
-  combineLatest,
   distinctUntilChanged,
   filter,
-  iif,
   map,
-  merge,
-  of,
-  startWith,
-  switchMap,
-  tap,
+  tap
 } from "rxjs";
-import { SESSION_KEYS } from "../../../shared/services/storage.keys";
-import { StorageService } from "../../../shared/services/storage.service";
 import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
 

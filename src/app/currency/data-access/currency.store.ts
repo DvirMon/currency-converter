@@ -1,14 +1,18 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { CurrencyService } from "../currency.service";
+import { HistoryService } from "../../history/data-access/history.service";
 
 @Injectable({ providedIn: "root" })
 export class CurrencyStore {
-  #currencyService = inject(CurrencyService);
+  #historyService = inject(HistoryService);
 
   convert = signal<{
     from: string;
     to: string;
-  }>(this.#currencyService.getConvertHistory());
+  }>(this.#historyService.getSessionConvertHistory());
 
-  amount = signal<number>(this.#currencyService.getAmountHistory());
+  amount = signal<number>(this.#historyService.getSessionAmountHistory());
+
+
+  selectedSymbol = signal<string>("USD");
+
 }
