@@ -4,7 +4,7 @@ import {
   computed,
   input,
 } from "@angular/core";
-import { CurrencyConvertPipe } from "../../../shared/pipes/currency-convert.pipe";
+import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
 
 @Component({
   selector: "app-currency-result",
@@ -18,16 +18,14 @@ export class CurrencyResultComponent {
   to = input.required<string>();
   amount = input.required<number>();
 
-
   lastRate: number = 0;
 
   exchangeRate = computed(() => {
     const rate = this.rate();
-    
+
     if (rate) {
       this.lastRate = rate[this.to()];
     }
     return this.lastRate;
-
   });
 }

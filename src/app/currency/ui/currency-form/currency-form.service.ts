@@ -11,7 +11,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { filter, iif, map, merge, of, startWith, switchMap, tap } from "rxjs";
-import { HistoryService } from "../../../history/data-access/history.service";
+import { HistoryService } from "../../feature/currency-history/data-access/history.service";
 
 export function differentCurrenciesValidator(): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
