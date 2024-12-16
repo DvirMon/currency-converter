@@ -1,12 +1,10 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
-import { MatTableModule } from "@angular/material/table";
-import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
 import { HistoryService } from "../../data-access/history.service";
+import { CurrencyHistoryTableComponent } from "../../ui/currency-history-table/currency-history-table.component";
 
 @Component({
   selector: "app-history",
-  imports: [MatTableModule, DatePipe, CurrencyConvertPipe, CurrencyPipe],
+  imports: [CurrencyHistoryTableComponent],
   templateUrl: "./history.component.html",
   styleUrl: "./history.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,7 +12,7 @@ import { HistoryService } from "../../data-access/history.service";
 export class CurrencyHistoryComponent {
   #historyService = inject(HistoryService);
 
-  recordHistory = this.#historyService.getRecordHistory();
+  dataSource = this.#historyService.getRecordHistory();
 
   displayedColumns: string[] = [
     "amount",
