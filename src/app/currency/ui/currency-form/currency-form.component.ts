@@ -4,26 +4,19 @@ import {
   Component,
   inject,
   input,
-  model
+  model,
 } from "@angular/core";
-import {
-  takeUntilDestroyed
-} from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   FormControl,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  tap
-} from "rxjs";
+import { distinctUntilChanged, filter, map, tap } from "rxjs";
 import { CurrencyList } from "../../data-access/currency.model";
 import { CurrencyFormService } from "./currency-form.service";
 
@@ -68,10 +61,14 @@ export class CurrencyFormComponent {
   );
 
   #convertChanged$ = this.currencyConverterForm.valueChanges.pipe(
+    tap((value) => console.log("value changed", value)),
+    tap(() => console.log(this.currencyConverterForm.controls.from.errors)),
+    tap(() => console.log(this.currencyConverterForm.status)),
     filter(() => this.currencyConverterForm.valid),
+    tap((value) => console.log("value valid", value)),
     tap(() => {
       if (!this.amountControl.valid) {
-        this.amountControl.setValue(1);
+        this.amountControl.setValue(1, { emitEvent: false });
       }
     })
   );
@@ -88,6 +85,12 @@ export class CurrencyFormComponent {
 
   constructor() {
     this.#convertChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
+      const { to, from } = value;
+
+      if (to === from) {
+        return;
+      }
+
       this.convert.update(() => value as { from: string; to: string });
     });
 

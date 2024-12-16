@@ -6,7 +6,7 @@ import {
   signal,
   Signal,
 } from "@angular/core";
-import { oneWeekAgo } from "../utils/one-week-ago";
+import { oneWeekAgo } from "../../shared/utils/one-week-ago";
 import {
   CurrencyList,
   ExchangeRateRangeResponse,
@@ -16,7 +16,7 @@ import { CurrencyStore } from "./currency.store";
 
 @Injectable({ providedIn: "root" })
 export class CurrencyHttpService {
-  #currencyStore = inject(CurrencyStore);
+  // #currencyStore = inject(CurrencyStore);
 
   //TODO - refactor with inject
 
@@ -24,23 +24,14 @@ export class CurrencyHttpService {
 
   #currencyListResource = this.#fetchCurrencyList();
 
-  #ratesResource = this.#fetchCurrencyRates(this.#currencyStore.convert);
 
-  #chartResource = this.#fetchChartData(this.#currencyStore.selectedSymbol);
 
-  getCurrencyList(): ResourceRef<CurrencyList> {
+  getCurrencyListResource(): ResourceRef<CurrencyList> {
     return this.#currencyListResource;
   }
 
-  getCurrencyRates(): ResourceRef<ExchangeRatesResponse> {
-    return this.#ratesResource;
-  }
 
-  getChartResource(): ResourceRef<ExchangeRateRangeResponse> {
-    return this.#chartResource;
-  }
-
-  #fetchChartData(
+  fetchChartData(
     symbols: Signal<string>
   ): ResourceRef<ExchangeRateRangeResponse> {
     // const { from, to } = symbols;
@@ -72,7 +63,7 @@ export class CurrencyHttpService {
     });
   }
 
-  #fetchCurrencyRates(
+  fetchCurrencyRates(
     symbols: Signal<{ from: string; to: string } | null>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({

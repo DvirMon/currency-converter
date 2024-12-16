@@ -5,6 +5,7 @@ import { CurrencyRecordCardComponent } from "../../ui/currency-record-card/curre
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Observable, map, shareReplay } from "rxjs";
+import { CurrencyStore } from "../../data-access/currency.store";
 
 @Component({
   selector: "app-history",
@@ -14,7 +15,7 @@ import { Observable, map, shareReplay } from "rxjs";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrencyHistoryComponent {
-  #historyService = inject(HistoryService);
+  #storeService = inject(CurrencyStore);
 
   #breakpointObserver = inject(BreakpointObserver);
 
@@ -24,7 +25,7 @@ export class CurrencyHistoryComponent {
 
   isHandset = toSignal(this.#isHandset$);
 
-  dataSource = this.#historyService.getRecordHistory();
+  dataSource = this.#storeService.history;
 
   displayedColumns: string[] = [
     "amount",
