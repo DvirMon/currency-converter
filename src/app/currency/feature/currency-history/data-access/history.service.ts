@@ -6,8 +6,8 @@ import {
   signal,
   WritableSignal,
 } from "@angular/core";
-import { SESSION_KEYS } from "../../shared/services/storage.keys";
-import { StorageService } from "../../shared/services/storage.service";
+import { SESSION_KEYS } from "../../../../shared/services/storage.keys";
+import { StorageService } from "../../../../shared/services/storage.service";
 
 export interface HistoryRecord {
   amount: number;

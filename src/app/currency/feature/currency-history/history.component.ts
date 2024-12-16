@@ -1,7 +1,7 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
-import { CurrencyConvertPipe } from "../shared/pipes/currency-convert.pipe";
+import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
 import { HistoryService } from "./data-access/history.service";
 
 @Component({
@@ -11,7 +11,7 @@ import { HistoryService } from "./data-access/history.service";
   styleUrl: "./history.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HistoryComponent {
+export class CurrencyHistoryComponent {
   #historyService = inject(HistoryService);
 
   recordHistory = this.#historyService.getRecordHistory();
