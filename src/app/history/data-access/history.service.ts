@@ -2,6 +2,7 @@ import {
   effect,
   inject,
   Injectable,
+  linkedSignal,
   signal,
   WritableSignal,
 } from "@angular/core";
@@ -28,21 +29,65 @@ export class HistoryService {
 
   constructor() {
     effect(() => {
-      this.#saveToSession();
+      this.#storageService.setToSession(
+        this.#sessionKeys.HISTORY,
+        this.#recordHistory()
+      );
     });
   }
 
   updateRecordHistory(record: HistoryRecord): void {
-    this.#recordHistory.update((recordHistory) => [...recordHistory, record]);
+    this.#recordHistory.update((recordHistory) =>
+      this.#compareTo(recordHistory[recordHistory.length - 1], record)
+        ? recordHistory
+        : [...recordHistory, record]
+    );
   }
   getRecordHistory(): WritableSignal<HistoryRecord[]> {
     return this.#recordHistory;
   }
 
-  #saveToSession() {
-    this.#storageService.setToSession(
-      this.#sessionKeys.HISTORY,
-      this.#recordHistory()
+  getSessionHistory(): HistoryRecord[] {
+    const history = this.#storageService.getFromSession<HistoryRecord[]>(
+      this.#sessionKeys.HISTORY
     );
+
+    return !!history ? [...history] : [];
+  }
+
+  #getSessionRecordHistory(): HistoryRecord | null {
+    const historyRecords = this.getSessionHistory();
+    if (historyRecords.length > 0) {
+      return historyRecords[historyRecords.length - 1];
+    }
+    return null;
+  }
+
+  getSessionAmountHistory(): number {
+    const record = this.#getSessionRecordHistory();
+    return record?.amount || 1;
+  }
+  getSessionFormHistory() {
+    return {
+      ...this.getSessionConvertHistory(),
+      amount: this.getSessionAmountHistory(),
+    };
+  }
+
+  getSessionConvertHistory() {
+    const record = this.#getSessionRecordHistory();
+    return record
+      ? {
+          from: record?.base,
+          to: record?.rates[0].code,
+        }
+      : {
+          from: "",
+          to: "",
+        };
+  }
+
+  #compareTo(record1: HistoryRecord, record2: HistoryRecord): boolean {
+    return JSON.stringify(record1) === JSON.stringify(record2);
   }
 }

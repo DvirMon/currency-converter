@@ -1,41 +1,67 @@
-import { Injectable, resource, ResourceRef, Signal } from "@angular/core";
+import {
+  inject,
+  Injectable,
+  resource,
+  ResourceRef,
+  signal,
+  Signal,
+} from "@angular/core";
 import { oneWeekAgo } from "../../shared/utils/one-week-ago";
 import {
   CurrencyList,
   ExchangeRateRangeResponse,
   ExchangeRatesResponse,
 } from "./currency.model";
+import { CurrencyStore } from "./currency.store";
 
 @Injectable({ providedIn: "root" })
 export class CurrencyHttpService {
-  #currencyListResource = this.fetchCurrencyList();
-
-  getCurrencyList(): ResourceRef<CurrencyList> {
-    return this.#currencyListResource;
-  }
+  #currencyStore = inject(CurrencyStore);
 
   //TODO - refactor with inject
 
   #BASE_URL = "https://api.frankfurter.dev/v1";
 
-  fetchChartData(
+  #currencyListResource = this.#fetchCurrencyList();
+
+  #ratesResource = this.#fetchCurrencyRates(this.#currencyStore.convert);
+
+  #chartResource = this.#fetchChartData(this.#currencyStore.selectedSymbol);
+
+  getCurrencyList(): ResourceRef<CurrencyList> {
+    return this.#currencyListResource;
+  }
+
+  getCurrencyRates(): ResourceRef<ExchangeRatesResponse> {
+    return this.#ratesResource;
+  }
+
+  getChartResource(): ResourceRef<ExchangeRateRangeResponse> {
+    return this.#chartResource;
+  }
+
+  #fetchChartData(
     symbols: Signal<string>
   ): ResourceRef<ExchangeRateRangeResponse> {
     // const { from, to } = symbols;
     return resource({
-      request: () => ({ symbols: symbols() }),
-      loader: async ({ request }) => {
+      request: () => symbols(),
+      loader: async ({ request: symbols }) => {
         const date = oneWeekAgo();
-        const symbols = request.symbols;
-        const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
-        const data = await fetch(url).then((res) => res.json());
-        return data;
+        // const symbols = symbols;
+
+        if (symbols) {
+          const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
+          const data = await fetch(url).then((res) => res.json());
+          return data;
+        }
+
+        return Promise.resolve(null);
       },
     });
   }
 
-
-  fetchCurrencyList(): ResourceRef<CurrencyList> {
+  #fetchCurrencyList(): ResourceRef<CurrencyList> {
     return resource({
       loader: async () => {
         const response = await fetch(`${this.#BASE_URL}/currencies`).then(
@@ -46,21 +72,21 @@ export class CurrencyHttpService {
     });
   }
 
-  fetchCurrencyRates(
-    symbols: Signal<{ from: string; to: string } | undefined>
+  #fetchCurrencyRates(
+    symbols: Signal<{ from: string; to: string } | null>
   ): ResourceRef<ExchangeRatesResponse> {
     return resource({
-      request: () => ({
-        params: symbols(),
-      }),
-      loader: async ({ request }) => {
-        if (request.params) {
-          const { to, from } = request.params;
+      request: () => symbols(),
+      loader: async ({ request: symbols }) => {
+        if (symbols && symbols.from && symbols.to) {
+          const { to, from } = symbols;
           const data = await fetch(
             `${this.#BASE_URL}/latest?base=${from}&symbols=${to}`
           ).then((res) => res.json());
           return data;
         }
+
+        return Promise.resolve(null);
       },
     });
   }

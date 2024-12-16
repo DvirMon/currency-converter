@@ -18,6 +18,7 @@ export class CurrencyResultComponent {
   to = input.required<string>();
   amount = input.required<number>();
 
+
   lastRate: number = 0;
 
   exchangeRate = computed(() => {
