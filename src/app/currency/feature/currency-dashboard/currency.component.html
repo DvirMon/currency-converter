@@ -1,15 +1,18 @@
-<div class="page-currency-wrapper">
-  <app-currency-form
-    [(amount)]="amount"
-    [(convert)]="convert"
-    [(selectedSymbol)]="selectedSymbol"
-    [currencyList]="currencyListResource.value()">
-  </app-currency-form>
+<div class="page-currency-container">
+  <div class="page-currency-wrapper">
+    <app-currency-form
+      [(amount)]="amount"
+      [(convert)]="convert"
+      [(selectedSymbol)]="selectedSymbol"
+      [currencyList]="currencyListResource.value()">
+    </app-currency-form>
 
-  <app-currency-result
-    [amount]="amount()"
-    [to]="to()"
-    [rate]="ratesResource.value()?.rates"></app-currency-result>
-  <app-currency-line-chart [currencyRate]="chartRatesResource.value()">
-  </app-currency-line-chart>
+    <app-currency-result
+      [amount]="amount()"
+      [to]="to()"
+      [exchangeRate]="exchangeRate$ | async"></app-currency-result>
+
+    <app-currency-line-chart [currencyRate]="chartRatesResource.value()">
+    </app-currency-line-chart>
+  </div>
 </div>

@@ -36,6 +36,7 @@ export class CurrencyLineChartComponent {
   data: Signal<ChartData | undefined> = computed(() => {
     const response = this.currencyRate();
 
+
     if (response) {
       return this.#mapRatesToChartData(response);
     }

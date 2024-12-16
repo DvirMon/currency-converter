@@ -1,7 +1,6 @@
 .form-currency-container {
   display: flex;
   gap: 16px;
-  justify-content: center;
   flex-direction: column;
 }
 
@@ -11,8 +10,11 @@ mat-error {
 
 section {
   display: grid;
-  gap: 16px;
   align-items: center;
+
+  &.section-wrapper {
+    gap: 16px;
+  }
 
   @media (max-width: 1000px) {
     &.section-wrapper {
@@ -37,8 +39,8 @@ section {
 
 form {
   display: flex;
-  gap: 24px;
-  justify-content: center;
+  // gap: 24px;
+  justify-content: space-between;
 
   @media (max-width: 1000px) {
     flex-direction: column;

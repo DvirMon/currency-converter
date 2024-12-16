@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   input,
 } from "@angular/core";
 import { CurrencyConvertPipe } from "../../utils/currency-convert.pipe";
@@ -15,18 +16,7 @@ import { CurrencyPipe } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrencyResultComponent {
-  rate = input.required<Record<string, number> | undefined>();
   to = input.required<string>();
+  exchangeRate = input.required<number | null>();
   amount = input.required<number>();
-
-  lastRate: number = 0;
-
-  exchangeRate = computed(() => {
-    const rate = this.rate();
-
-    if (rate) {
-      this.lastRate = rate[this.to()];
-    }
-    return this.lastRate;
-  });
 }

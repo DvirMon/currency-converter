@@ -61,14 +61,10 @@ export class CurrencyFormComponent {
   );
 
   #convertChanged$ = this.currencyConverterForm.valueChanges.pipe(
-    tap((value) => console.log("value changed", value)),
-    tap(() => console.log(this.currencyConverterForm.controls.from.errors)),
-    tap(() => console.log(this.currencyConverterForm.status)),
     filter(() => this.currencyConverterForm.valid),
-    tap((value) => console.log("value valid", value)),
     tap(() => {
       if (!this.amountControl.valid) {
-        this.amountControl.setValue(1, { emitEvent: false });
+        // this.amountControl.setValue(1);
       }
     })
   );

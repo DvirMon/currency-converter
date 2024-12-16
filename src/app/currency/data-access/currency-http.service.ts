@@ -24,12 +24,9 @@ export class CurrencyHttpService {
 
   #currencyListResource = this.#fetchCurrencyList();
 
-
-
   getCurrencyListResource(): ResourceRef<CurrencyList> {
     return this.#currencyListResource;
   }
-
 
   fetchChartData(
     symbols: Signal<string>
@@ -43,8 +40,20 @@ export class CurrencyHttpService {
 
         if (symbols) {
           const url = `${this.#BASE_URL}/${date}..?&symbols=${symbols}`;
-          const data = await fetch(url).then((res) => res.json());
-          return data;
+
+          try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.message) {
+              alert(data.message + " any data");
+              return null;
+            }
+
+            return data;
+          } catch (error) {
+            return null;
+          }
         }
 
         return Promise.resolve(null);
