@@ -74,57 +74,13 @@ export class CurrencyFormComponent {
   }> = this.#currencyFormService.createCurrencyConverterForm();
 
   amountControl = this.#currencyFormService.getAmountControl();
-  toControl = this.currencyConverterForm.controls.to;
-  fromControl = this.currencyConverterForm.controls.from;
 
-  toValue$ = this.toControl.valueChanges.pipe(startWith(this.toControl.value));
-
-  fromValue$ = this.fromControl.valueChanges.pipe(
-    startWith(this.fromControl.value)
-  );
-
-  amountValue$ = this.amountControl.valueChanges.pipe(
-    // startWith(this.amountControl.value),
-    map((value) => Number(value)),
+  #amountChanged$ = this.amountControl.valueChanges.pipe(
     map((value) => (value > 0 ? value : 0)),
     distinctUntilChanged()
   );
 
-  toValue = toSignal(this.toValue$, {
-    initialValue: this.toControl.value,
-  });
-
-  fromValue = toSignal(this.fromValue$, {
-    initialValue: this.fromControl.value,
-  });
-
-  amountValue = toSignal(this.amountValue$, {
-    initialValue: +this.amountControl.value,
-  });
-
-  amountTouchedEvent$ = this.amountControl.events.pipe(
-    filter((event) => event instanceof TouchedChangeEvent),
-    filter((event: TouchedChangeEvent) => event.touched)
-  );
-
-  amountError$ = merge(
-    this.amountControl.statusChanges,
-    this.amountControl.valueChanges,
-    this.amountTouchedEvent$
-  ).pipe(map(() => this.setErrorMessage(this.amountControl)));
-
-  amountErrorMessage = toSignal(this.amountError$);
-
-  currencyFormValue = computed(() => {
-    return {
-      from: this.fromValue(),
-      to: this.toValue(),
-    };
-  });
-
-  currencyFormValues$ = toObservable(this.currencyFormValue);
-
-  convertTrigger$ = this.currencyConverterForm.valueChanges.pipe(
+  #convertChanged$ = this.currencyConverterForm.valueChanges.pipe(
     filter(() => this.currencyConverterForm.valid),
     tap(() => {
       if (!this.amountControl.valid) {
@@ -133,35 +89,22 @@ export class CurrencyFormComponent {
     })
   );
 
-  hasSameCurrencyError$ = this.currencyConverterForm.statusChanges.pipe(
-    startWith(this.currencyConverterForm.status),
-    map(() => this.currencyConverterForm.errors),
-    map((errors) => errors && errors["sameCurrency"])
+  amountErrorMessage = this.#currencyFormService.setAmountErrorMessage(
+    this.amountControl
   );
 
-  sameCurrencyValidatorErrorMessage$ = this.hasSameCurrencyError$.pipe(
-    switchMap((hasError) =>
-      iif(
-        () => hasError,
-        of("The from and to currencies must be different").pipe(
-          tap(() => this.amountControl.disable({ emitEvent: false }))
-        ),
-        of("").pipe(tap(() => this.amountControl.enable()))
-      )
-    )
-  );
-
-  sameCurrencyValidatorErrorMessage = toSignal(
-    this.sameCurrencyValidatorErrorMessage$
-  );
-
+  sameCurrencyValidatorErrorMessage =
+    this.#currencyFormService.getSameCurrencyErrorMessage(
+      this.currencyConverterForm,
+      this.amountControl
+    );
 
   constructor() {
-    this.convertTrigger$.pipe(takeUntilDestroyed()).subscribe((value) => {
+    this.#convertChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.convert.update(() => value as { from: string; to: string });
     });
 
-    this.amountValue$.pipe(takeUntilDestroyed()).subscribe((value) => {
+    this.#amountChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.amount.update(() => value);
     });
   }

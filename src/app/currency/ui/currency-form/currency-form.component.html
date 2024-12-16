@@ -10,8 +10,9 @@
     <section>
       <span> From: </span>
       <mat-form-field>
-        <mat-select formControlName="from" (selectionChange)="onCurrencySelectionChanged($event)">
-        <!-- <mat-select formControlName="from"> -->
+        <mat-select
+          formControlName="from"
+          (selectionChange)="onCurrencySelectionChanged($event)">
           @for(item of currencyList() | keyvalue; track item.key) {
           <mat-option [value]="item.key">{{ item.value }}</mat-option>
           }
@@ -23,8 +24,9 @@
     <section>
       <span> To: </span>
       <mat-form-field>
-        <mat-select formControlName="to" (selectionChange)="onCurrencySelectionChanged($event)">
-        <!-- <mat-select formControlName="to"> -->
+        <mat-select
+          formControlName="to"
+          (selectionChange)="onCurrencySelectionChanged($event)">
           @for(item of currencyList() | keyvalue; track item.key) {
           <mat-option [value]="item.key">{{ item.value }}</mat-option>
           }
