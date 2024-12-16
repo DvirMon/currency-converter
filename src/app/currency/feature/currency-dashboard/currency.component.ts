@@ -10,18 +10,18 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { CurrencyHttpService } from "./data-access/currency-http.service";
-import { CurrencyFormService } from "./ui/currency-form/currency-form.service";
+import { CurrencyHttpService } from "../../data-access/currency-http.service";
+import { CurrencyFormService } from "../../ui/currency-form/currency-form.service";
 
 import {
   HistoryRecord,
   HistoryService,
-} from "../history/data-access/history.service";
-import { ExchangeRatesResponse } from "./data-access/currency.model";
-import { CurrencyStore } from "./data-access/currency.store";
-import { CurrencyFormComponent } from "./ui/currency-form/currency-form.component";
-import { CurrencyLineChartComponent } from "./ui/currency-line-chart/currency-line-chart.component";
-import { CurrencyResultComponent } from "./ui/currency-result/currency-result.component";
+} from "../currency-history/data-access/history.service";
+import { ExchangeRatesResponse } from "../../data-access/currency.model";
+import { CurrencyStore } from "../../data-access/currency.store";
+import { CurrencyFormComponent } from "../../ui/currency-form/currency-form.component";
+import { CurrencyLineChartComponent } from "../../ui/currency-line-chart/currency-line-chart.component";
+import { CurrencyResultComponent } from "../../ui/currency-result/currency-result.component";
 
 @Component({
   selector: "app-currency",
@@ -41,7 +41,7 @@ import { CurrencyResultComponent } from "./ui/currency-result/currency-result.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CurrencyFormService],
 })
-export class CurrencyComponent {
+export class CurrencyDashboardComponent {
   #currencyHttpService = inject(CurrencyHttpService);
   #historyService = inject(HistoryService);
   #currencyStore = inject(CurrencyStore);
