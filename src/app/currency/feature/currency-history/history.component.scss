@@ -1,11 +1,33 @@
-.history-container {
-    padding: 20px;
+.currency-record-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px; // Adjust spacing between cards
+  padding: 16px;
+
+  // // Media queries for different screen sizes
+  // @media (max-width: 1024px) { // Tablets
+  //   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  //   gap: 12px;
+  // }
+
+  // @media (max-width: 768px) { // Small Tablets and Large Phones
+  //   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  //   gap: 8px;
+  //   padding: 12px;
+  // }
+
+  @media (max-width: 480px) {
+    // Phones
+    grid-template-columns: 1fr; // Single-column layout
+    gap: 8px;
+    padding: 8px;
   }
-  
-  table {
-    width: 100%;
+}
+
+.currency-record-table-container {
+  display: flex;
+  justify-content: center;
+  .currency-record-table-wrapper {
+    width: 80%;
   }
-  
-  th.mat-header-cell, td.mat-cell {
-    text-align: left;
-  }
+}

@@ -58,17 +58,20 @@ export class CurrencyFormService {
       filter((event: TouchedChangeEvent) => event.touched)
     );
 
-    const amountError$ = merge(
+    const amountErrorMessage$ = merge(
       amountControl.statusChanges,
       amountControl.valueChanges,
       amountTouchedEvent$
     ).pipe(map(() => this.#setErrorMessage(amountControl)));
 
-    return toSignal(amountError$);
+    return toSignal(amountErrorMessage$);
   }
 
   getSameCurrencyErrorMessage(
-    currencyForm: FormGroup,
+    currencyForm: FormGroup<{
+      to: FormControl<string>;
+      from: FormControl<string>;
+    }>,
     amountControl: FormControl<number>
   ): Signal<string | undefined> {
     const hasSameCurrencyError$ = currencyForm.statusChanges.pipe(
@@ -82,6 +85,13 @@ export class CurrencyFormService {
         iif(
           () => hasError,
           of("The from and to currencies must be different").pipe(
+            tap(() => {
+              currencyForm.controls.from.setErrors(
+                { sameCurrency: true },
+                { emitEvent: false }
+              );
+              currencyForm.controls.from.markAsTouched();
+            }),
             tap(() => amountControl.disable({ emitEvent: false }))
           ),
           of("").pipe(tap(() => amountControl.enable()))
