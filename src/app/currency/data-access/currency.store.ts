@@ -25,7 +25,9 @@ export class CurrencyStore {
 
   amount = signal<number>(this.#historyService.getSessionAmountHistory());
 
-  selectedSymbol = signal<string>("USD");
+  selectedSymbol = signal<string>(
+    this.#historyService.geSessionSelectedSymbol()
+  );
 
   ratesResource = this.#currencyHttpService.fetchCurrencyRates(this.convert);
 
@@ -45,21 +47,25 @@ export class CurrencyStore {
   history = linkedSignal({
     source: this.historyRecord,
     computation: (value) => {
-      const sessionHistory = this.#historyService.getSessionHistory();
+      const recordsHistory = this.#historyService.getSessionRecordHistory();
 
       if (
         value &&
-        !this.#compareTo(sessionHistory[sessionHistory.length - 1], value)
+        !this.#compareTo(recordsHistory[recordsHistory.length - 1], value)
       ) {
-        sessionHistory.push(value);
+        recordsHistory.push(value);
       }
 
-      return sessionHistory;
+      return recordsHistory;
     },
   });
 
-  saveToSession = effect(() => {
+  saveHistoryToSession = effect(() => {
     this.#historyService.setHistoryToSession(this.history());
+  });
+
+  saveSymbolToSession = effect(() => {
+    this.#historyService.seSessionSelectedSymbol(this.selectedSymbol());
   });
 
   #transformSourceToHistory(
