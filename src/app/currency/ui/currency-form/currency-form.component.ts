@@ -22,7 +22,7 @@ import {
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
+import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 import {
   combineLatest,
   distinctUntilChanged,
@@ -63,11 +63,10 @@ export class CurrencyFormComponent {
     from: string;
     to: string;
   } | null>();
-  // amountChanged = output<number>();
 
   amount = model<number>();
 
-  currencyChanged = output<string>();
+  selectedSymbol = model<string>();
 
   currencyConverterForm: FormGroup<{
     from: FormControl<string>;
@@ -156,16 +155,6 @@ export class CurrencyFormComponent {
     this.sameCurrencyValidatorErrorMessage$
   );
 
-  currencySelectionChanged$ = merge(
-    toObservable(this.toValue),
-    toObservable(this.fromValue)
-  ).pipe(
-    filter((value) => !!value),
-    distinctUntilChanged()
-  );
-
-  //TODO - emit amount only when form is valid
-  // #amountChanged$ = toObservable(this.amountValue);
 
   constructor() {
     this.convertTrigger$.pipe(takeUntilDestroyed()).subscribe((value) => {
@@ -175,12 +164,10 @@ export class CurrencyFormComponent {
     this.amountValue$.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.amount.update(() => value);
     });
+  }
 
-    this.currencySelectionChanged$
-      .pipe(takeUntilDestroyed())
-      .subscribe((value) => {
-        this.currencyChanged.emit(value);
-      });
+  onCurrencySelectionChanged(event: MatSelectChange) {
+    this.selectedSymbol.set(event.value);
   }
 
   setErrorMessage(control: FormControl<unknown>) {

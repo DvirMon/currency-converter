@@ -2,8 +2,9 @@
   <app-currency-form
     [(amount)]="amount"
     [(convert)]="convert"
-    [currencyList]="currencyListResource.value()"
-    (currencyChanged)="onCurrencySelectionChanged($event)"></app-currency-form>
+    [(selectedSymbol)]="selectedSymbol"
+    [currencyList]="currencyListResource.value()">
+  </app-currency-form>
 
   <app-currency-result
     [amount]="amount()"

@@ -57,14 +57,15 @@ export class CurrencyComponent {
 
   amount = signal<number>(this.#currencyService.getAmountHistory());
 
-  selectedCurrencySymbol = signal<string>("USD");
+  //TODO = add history
+  selectedSymbol = signal<string>("USD");
 
   currencyListResource = this.#currencyHttpService.getCurrencyList();
 
   ratesResource = this.#currencyHttpService.fetchCurrencyRates(this.convert);
 
   currencyRatesResource = this.#currencyHttpService.fetchChartData(
-    this.selectedCurrencySymbol
+    this.selectedSymbol
   );
 
   to = computed(() => {
@@ -95,9 +96,9 @@ export class CurrencyComponent {
     });
   }
 
-  onCurrencySelectionChanged(symbol: string) {
-    this.selectedCurrencySymbol.set(symbol);
-  }
+  // onCurrencySelectionChanged(symbol: string) {
+  //   this.selectedCurrencySymbol.set(symbol);
+  // }
 
   #transformSourceToHistory(
     amount: number,
@@ -117,10 +118,5 @@ export class CurrencyComponent {
     return null;
   }
 
-  updateHistory() {
-    const record = this.historyRecord();
-    if (record) {
-      this.#historyService.updateRecordHistory(record);
-    }
-  }
+
 }
