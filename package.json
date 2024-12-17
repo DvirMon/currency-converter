@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:currecny-converter": "node dist/currency-converter/server/server.mjs"
+    "serve:ssr:currency-converter": "node dist/currency-converter/server/server.mjs"
   },
   "private": true,
   "dependencies": {
