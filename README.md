@@ -31,7 +31,7 @@ The **Currency Converter** is a utility web application created as part of a hom
 
 5. **Enhanced Form Validation**:
    - Prevents selecting the same currency for conversion.
-   - Displays meaningful error messages such as “Currency not found” for invalid input.
+   - Displays error messages such as “Currency not found” for invalid input.
 
 6. **Better UX Enhancements**:
    - Disables the amount input when a selected currency is invalid.
@@ -96,6 +96,7 @@ The **Currency Converter** is a utility web application created as part of a hom
 
 2. **UX Optimizations**:
    - Enhance form interactivity to dynamically update when the user modifies the input or dropdowns.
+   - Show error messages using a **toaster** or **snackbar** for better visibility.
 
 ## Technical Highlights
 1. **Minimal API Calls**:
