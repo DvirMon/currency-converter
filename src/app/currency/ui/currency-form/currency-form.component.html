@@ -1,5 +1,13 @@
 <div class="form-currency-container">
   <form [formGroup]="currencyConverterForm">
+    
+    <section>
+      <mat-form-field>
+        <input type="number" matInput [formControl]="amountControl" />
+        <mat-error>{{ amountErrorMessage() }}</mat-error>
+      </mat-form-field>
+    </section>
+
     <section class="section-wrapper">
       <span> From: </span>
       <mat-form-field>
@@ -28,13 +36,6 @@
           }
         </mat-select>
         <mat-error>Currency is required</mat-error>
-      </mat-form-field>
-    </section>
-
-    <section>
-      <mat-form-field>
-        <input type="number" matInput [formControl]="amountControl" />
-        <mat-error>{{ amountErrorMessage() }}</mat-error>
       </mat-form-field>
     </section>
   </form>

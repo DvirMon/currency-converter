@@ -5,23 +5,19 @@
   flex-direction: column;
 }
 
-mat-error {
-  margin: auto;
-}
-
 section {
   display: grid;
   gap: 16px;
   align-items: center;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1800px) {
     &.section-wrapper {
       grid-template-columns: 64px 1fr; //
     }
     width: 80%;
   }
 
-  @media (min-width: 1000px) {
+  @media (min-width: 1800px) {
     grid-template-columns: auto 1fr;
   }
 
@@ -40,7 +36,7 @@ form {
   gap: 24px;
   justify-content: center;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1800px) {
     flex-direction: column;
     gap: 16px;
     align-items: center;

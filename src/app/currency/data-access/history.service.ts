@@ -58,7 +58,7 @@ export class HistoryService {
 
   getSessionAmountHistory(): number {
     const record = this.#getSessionRecordHistory();
-    return record?.amount || 1;
+    return record?.amount || 0;
   }
   getSessionFormHistory() {
     return {
@@ -75,8 +75,8 @@ export class HistoryService {
           to: record?.rates[0].code,
         }
       : {
-          from: "",
-          to: "",
+          from: "ILS",
+          to: "USD",
         };
   }
 }

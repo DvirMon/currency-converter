@@ -1,7 +1,7 @@
 import { Component, computed, inject } from "@angular/core";
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
-import { map, shareReplay } from "rxjs/operators";
-import { AsyncPipe } from "@angular/common";
+import { map, shareReplay, tap } from "rxjs/operators";
+import { AsyncPipe, NgTemplateOutlet } from "@angular/common";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconModule } from "@angular/material/icon";
@@ -17,7 +17,9 @@ import { CurrencyFormComponent } from "../currency/ui/currency-form/currency-for
 import { CurrencyLineChartComponent } from "../currency/ui/currency-line-chart/currency-line-chart.component";
 import { CurrencyResultComponent } from "../currency/ui/currency-result/currency-result.component";
 import { CurrencyFormService } from "../currency/ui/currency-form/currency-form.service";
-import { Observable } from "rxjs";
+import { merge, Observable } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { CurrencyDashboardService } from "./currency-dashboard.service";
 
 @Component({
   selector: "app-currency-dashboard",
@@ -26,6 +28,7 @@ import { Observable } from "rxjs";
   standalone: true,
   imports: [
     AsyncPipe,
+    NgTemplateOutlet,
     MatGridListModule,
     MatCardModule,
     FormsModule,
@@ -41,6 +44,7 @@ import { Observable } from "rxjs";
 })
 export class CurrencyDashboardComponent {
   #currencyHttpService = inject(CurrencyHttpService);
+  #dashboardService = inject(CurrencyDashboardService);
   #currencyStore = inject(CurrencyStore);
   #breakpointObserver = inject(BreakpointObserver);
 
@@ -62,38 +66,20 @@ export class CurrencyDashboardComponent {
     return to;
   });
 
+  // Card Observables
+  card1$ = this.#dashboardService.card1$;
+  card2$: Observable<{ cols: number; rows: number }> =
+    this.#dashboardService.card2$;
+
+  card3$: Observable<{ cols: number; rows: number }> =
+    this.#dashboardService.card3$;
+
   isMatch$ = this.#breakpointObserver
-    .observe([Breakpoints.Handset, Breakpoints.Small])
+    .observe([Breakpoints.Small, Breakpoints.XSmall])
     .pipe(
       map((result) => result.matches),
       shareReplay(1)
     );
 
-  card1$: Observable<{ cols: number; rows: number }> = this.isMatch$.pipe(
-    map((isMatch) => {
-      if (isMatch) {
-        return { cols: 2, rows: 1 };
-      } else {
-        return { cols: 1, rows: 1 };
-      }
-    })
-  );
-  card2$: Observable<{ cols: number; rows: number }> = this.isMatch$.pipe(
-    map((isMatch) => {
-      if (isMatch) {
-        return { cols: 2, rows: 1 };
-      } else {
-        return { cols: 1, rows: 2 };
-      }
-    })
-  );
-  card3$: Observable<{ cols: number; rows: number }> = this.isMatch$.pipe(
-    map((isMatch) => {
-      if (isMatch) {
-        return { cols: 2, rows: 1 };
-      } else {
-        return { cols: 1, rows: 1 };
-      }
-    })
-  );
+  isMatch = toSignal(this.isMatch$);
 }
