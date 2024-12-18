@@ -1,0 +1,54 @@
+@let card1 = card1$ | async; @let card2 = card2$ | async; @let card3 = card3$ |
+async;
+
+<div class="grid-container">
+  <h1 class="mat-h1">Dashboard</h1>
+  <mat-grid-list cols="2" rowHeight="350px">
+    <mat-grid-tile [colspan]="card1?.cols" [rowspan]="card1?.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-header> </mat-card-header>
+        <mat-card-content>
+          <app-currency-form
+            [(amount)]="amount"
+            [(convert)]="convert"
+            [(selectedSymbol)]="selectedSymbol"
+            [currencyList]="currencyListResource.value()">
+          </app-currency-form>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="card2?.cols" [rowspan]="card2?.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-content>
+          @if(isMatch()) {
+          <ng-container *ngTemplateOutlet="results"></ng-container> } @else {
+          <ng-container *ngTemplateOutlet="chart"></ng-container> }
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="card3?.cols" [rowspan]="card3?.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-content>
+          @if(isMatch()) {
+
+          <ng-container *ngTemplateOutlet="chart"></ng-container> } @else {
+          <ng-container *ngTemplateOutlet="results"></ng-container> }
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+
+<ng-template #chart>
+  <app-currency-line-chart [currencyRate]="chartRatesResource.value()">
+  </app-currency-line-chart>
+</ng-template>
+
+<ng-template #results>
+  <app-currency-result
+    [amount]="amount()"
+    [to]="to()"
+    [rate]="ratesResource.value()?.rates"></app-currency-result>
+</ng-template>

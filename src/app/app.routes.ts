@@ -2,9 +2,17 @@ import { Routes } from "@angular/router";
 
 export const routes: Routes = [
   {
-    path: "",
+    path: "dashboard",
     loadComponent: () =>
-      import("./currency/feature/currency-dashboard/currency.component").then(
+      import(
+        "./currency/feature/currency-dashboard/currency-dashboard.component"
+      ).then((m) => m.CurrencyDashboardComponent),
+  },
+
+  {
+    path: "original",
+    loadComponent: () =>
+      import("./currency/feature/currency-dashboard-original/currency.component").then(
         (m) => m.CurrencyDashboardComponent
       ),
   },
@@ -18,8 +26,8 @@ export const routes: Routes = [
   },
 
   {
-    path: "**",
-    redirectTo: "",
+    path: "",
+    redirectTo: "dashboard",
     pathMatch: "full",
   },
 ];

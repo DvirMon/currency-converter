@@ -1,0 +1,25 @@
+.grid-container {
+  margin: 20px;
+}
+
+.dashboard-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+}
+
+.dashboard-card-content {
+  // display: flex;
+  // justify-content: center;
+}
+
+.mat-mdc-card-content {
+  // display: flex;
+  // align-items: center;
+  // vertical-align: middle;
+  // width: 100%;
+  width: 100%;
+  margin: auto;
+}
