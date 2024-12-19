@@ -1,9 +1,6 @@
 import {
-  effect,
   inject,
-  Injectable,
-  signal,
-  WritableSignal,
+  Injectable
 } from "@angular/core";
 import { SESSION_KEYS } from "../../shared/services/storage.keys";
 import { StorageService } from "../../shared/services/storage.service";
@@ -56,9 +53,9 @@ export class HistoryService {
     return null;
   }
 
-  getSessionAmountHistory(): number {
+  getSessionAmountHistory(): string {
     const record = this.#getSessionRecordHistory();
-    return record?.amount || 0;
+    return JSON.stringify(record?.amount) || "";
   }
   getSessionFormHistory() {
     return {

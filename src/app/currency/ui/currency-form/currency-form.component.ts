@@ -56,12 +56,13 @@ export class CurrencyFormComponent {
   amountControl = this.#currencyFormService.getAmountControl();
 
   #amountChanged$ = this.amountControl.valueChanges.pipe(
+    map((value) => Number(value)),
     map((value) => (value > 0 ? value : 0)),
     distinctUntilChanged()
   );
 
   #convertChanged$ = this.currencyConverterForm.valueChanges.pipe(
-    filter(() => this.currencyConverterForm.valid),
+    filter(() => this.currencyConverterForm.valid)
     // tap(() => {
     //   if (!this.amountControl.valid) {
     //     this.amountControl.setValue(1, { emitEvent: false });
@@ -78,6 +79,7 @@ export class CurrencyFormComponent {
       this.currencyConverterForm,
       this.amountControl
     );
+
 
   constructor() {
     this.#convertChanged$.pipe(takeUntilDestroyed()).subscribe((value) => {

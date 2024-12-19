@@ -24,7 +24,9 @@ export class CurrencyStore {
     to: string;
   }>(this.#historyService.getSessionConvertHistory());
 
-  amount = signal<number>(this.#historyService.getSessionAmountHistory());
+  amount = signal<number>(
+    Number(this.#historyService.getSessionAmountHistory())
+  );
 
   selectedSymbol = signal<string>(
     this.#historyService.geSessionSelectedSymbol()
@@ -72,7 +74,6 @@ export class CurrencyStore {
     },
   });
 
-
   saveHistoryToSession = effect(() => {
     this.#historyService.setHistoryToSession(this.history());
   });
@@ -103,16 +104,3 @@ export class CurrencyStore {
     return JSON.stringify(record1) === JSON.stringify(record2);
   }
 }
-//   stateA = signal(0);
-//   stateB = signal(0);
-
-//   sum= linkedSignal<number[], number[]>({
-//     source: computed(() => [this.stateA(), this.stateB()]),
-
-//     computation: (newStates, previous) => {
-//       const [newStateA, newStateB] = newStates;
-//       const sum = newStateA + newStateB;
-//       const previousHistory = previous?.value ?? [];
-//       return [...previousHistory, sum];
-//     }
-// }
