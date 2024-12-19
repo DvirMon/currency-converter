@@ -47,8 +47,8 @@ export class CurrencyFormService {
     );
   }
 
-  getAmountControl(): FormControl<number> {
-    return this.#nfb.control(this.defaultValues.amount, [
+  getAmountControl(): FormControl<string> {
+    return this.#nfb.control((this.defaultValues.amount), [
       Validators.required,
       Validators.pattern(/^[1-9][0-9]*$/),
     ]);
@@ -57,12 +57,12 @@ export class CurrencyFormService {
   #getFormDefaults(): {
     from: string;
     to: string;
-    amount: number;
+    amount: string;
   } {
     return this.#historyService.getSessionFormHistory();
   }
 
-  setAmountErrorMessage(amountControl: FormControl<number>) {
+  setAmountErrorMessage(amountControl: FormControl<unknown>) {
     const amountTouchedEvent$ = amountControl.events.pipe(
       filter((event) => event instanceof TouchedChangeEvent),
       filter((event: TouchedChangeEvent) => event.touched)
@@ -82,7 +82,7 @@ export class CurrencyFormService {
       to: FormControl<string>;
       from: FormControl<string>;
     }>,
-    amountControl: FormControl<number>
+    amountControl: FormControl<string>
   ): Signal<string | undefined> {
     const hasSameCurrencyError$ = merge(
       currencyForm.valueChanges,
@@ -110,7 +110,7 @@ export class CurrencyFormService {
             tap(() => amountControl.enable({ emitEvent: false })),
             tap(() =>
               currencyForm.controls.from.updateValueAndValidity({
-                emitEvent: false
+                emitEvent: false,
               })
             )
           )

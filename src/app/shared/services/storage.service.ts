@@ -1,13 +1,14 @@
 import { isPlatformBrowser } from "@angular/common";
 import { inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { SESSION_KEYS, SessionKeys } from "./storage.keys";
+import { SessionKeys } from "./storage.keys";
+
+type SessionKeysType = typeof SessionKeys[keyof typeof SessionKeys]
 
 @Injectable({
   providedIn: "root",
 })
 export class StorageService {
   #platformId = inject(PLATFORM_ID);
-  #sessionKeys = inject(SESSION_KEYS);
 
   #idleCallbackMap: Map<string, number> = new Map();
 

@@ -117,7 +117,7 @@ The project is deployed on **Vercel** and accessible at:
 [**Live Demo URL**](#) *https://carologix-currency-converter.vercel.app/*
 
 ## GitHub Issues
-For bug reports, feature requests, or general feedback, please visit:  
+Added the link for Angular 19 run time issue:  
 [**GitHub Issues**](#) *(https://github.com/angular/angular/issues/59058)*
 
 ---
