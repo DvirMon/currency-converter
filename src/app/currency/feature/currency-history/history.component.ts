@@ -5,10 +5,14 @@ import { Observable, map } from "rxjs";
 import { CurrencyStore } from "../../data-access/currency.store";
 import { CurrencyRecordCardComponent } from "../../ui/currency-record-card/currency-record-card.component";
 import { CurrencyRecordTableComponent } from "../../ui/currency-record-table/currency-record-table.component";
+import { NgFor, NgIf } from "@angular/common";
 
 @Component({
   selector: "app-currency-history",
-  imports: [CurrencyRecordTableComponent, CurrencyRecordCardComponent],
+  imports: [
+    CurrencyRecordTableComponent,
+    CurrencyRecordCardComponent,
+  ],
   templateUrl: "./history.component.html",
   styleUrl: "./history.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

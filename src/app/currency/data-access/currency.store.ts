@@ -1,4 +1,5 @@
 import {
+  computed,
   effect,
   inject,
   Injectable,
@@ -33,10 +34,23 @@ export class CurrencyStore {
 
   chartResource = this.#currencyHttpService.fetchChartData(this.selectedSymbol);
 
-  historyRecord = linkedSignal<TypedLinkedSignal, HistoryRecord | null>({
-    source: () => ({ data: this.ratesResource.value(), amount: this.amount() }),
-    computation: (params) => {
-      const { amount, data } = params;
+  // historyRecord = linkedSignal<TypedLinkedSignal, HistoryRecord | null>({
+  //   source: () => ({ data: this.ratesResource.value(), amount: this.amount() }),
+  //   computation: (params) => {
+  //     const { amount, data } = params;
+  //     if (data && amount) {
+  //       return this.#transformSourceToHistory(amount, data);
+  //     }
+  //     return null;
+  //   },
+  // });
+
+  historyRecord = linkedSignal({
+    source: computed(() => ({
+      data: this.ratesResource.value(),
+      amount: this.amount(),
+    })),
+    computation: ({ data, amount }) => {
       if (data && amount) {
         return this.#transformSourceToHistory(amount, data);
       }
@@ -44,21 +58,20 @@ export class CurrencyStore {
     },
   });
 
-  history = linkedSignal({
-    source: this.historyRecord,
-    computation: (value) => {
-      const recordsHistory = this.#historyService.getSessionRecordHistory();
+  history = linkedSignal<HistoryRecord | null, HistoryRecord[]>({
+    source: computed(() => this.historyRecord()),
+    computation: (newRecord) => {
+      const sessionHistory = this.#historyService.getSessionRecordHistory();
 
-      if (
-        value &&
-        !this.#compareTo(recordsHistory[recordsHistory.length - 1], value)
-      ) {
-        recordsHistory.push(value);
+      const lastRecord = sessionHistory[sessionHistory.length - 1];
+
+      if (newRecord && !this.#compareTo(lastRecord, newRecord)) {
+        return [...sessionHistory, newRecord];
       }
-
-      return recordsHistory;
+      return sessionHistory;
     },
   });
+
 
   saveHistoryToSession = effect(() => {
     this.#historyService.setHistoryToSession(this.history());
@@ -90,3 +103,16 @@ export class CurrencyStore {
     return JSON.stringify(record1) === JSON.stringify(record2);
   }
 }
+//   stateA = signal(0);
+//   stateB = signal(0);
+
+//   sum= linkedSignal<number[], number[]>({
+//     source: computed(() => [this.stateA(), this.stateB()]),
+
+//     computation: (newStates, previous) => {
+//       const [newStateA, newStateB] = newStates;
+//       const sum = newStateA + newStateB;
+//       const previousHistory = previous?.value ?? [];
+//       return [...previousHistory, sum];
+//     }
+// }
